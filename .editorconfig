@@ -1,0 +1,16 @@
+﻿root = true
+
+[*.cs]
+
+# Set all analyzer diagnostics to warning by default
+# This applies to all analyzers (NetAnalyzers, StyleCop, SonarAnalyzer, SecurityCodeScan)
+dotnet_analyzer_diagnostic.severity = warning
+
+# StyleCop.Analyzers
+dotnet_diagnostic.SA0001.severity = none # SA0001: XML Comment Analysis Disabled
+dotnet_diagnostic.SA1000.severity = none # SA1000: The keyword 'new' should be followed by a space
+dotnet_diagnostic.SA1101.severity = none # Prefix local calls with this
+dotnet_diagnostic.SA1200.severity = none # SA1200: Using directive should appear within a namespace declaration
+dotnet_diagnostic.SA1206.severity = none # SA1206: The 'required' modifier should appear before 'public'
+dotnet_diagnostic.SA1309.severity = none # Field names should not begin with underscore
+dotnet_diagnostic.SA1633.severity = none # SA1633: File must have header documentation

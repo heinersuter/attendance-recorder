@@ -2,24 +2,31 @@
 
 namespace AttendanceRecorder.LifeSign;
 
-public sealed class LifeSignService : IDisposable
+public sealed class LifeSignService : IAsyncDisposable
 {
-    private readonly LifeSignWriter _lifeSignWriter;
     private readonly LifeSignConfig _config;
-    private readonly ManualResetEventSlim _runEvent = new(false);
     private readonly CancellationTokenSource _cts = new();
-    private readonly Task _backgroundTask;
+    private readonly LifeSignWriter _lifeSignWriter;
+    private readonly ManualResetEventSlim _runEvent = new(false);
 
     public LifeSignService(IOptions<LifeSignConfig> lifeSignConfigOptions)
     {
         _config = lifeSignConfigOptions.Value;
         _lifeSignWriter = new LifeSignWriter(_config);
-        _backgroundTask = Task.Run(BackgroundLoop);
     }
 
-    public void Start()
+    public async ValueTask DisposeAsync()
+    {
+        await _cts.CancelAsync().ConfigureAwait(false);
+        _cts.Dispose();
+        _runEvent.Dispose();
+    }
+
+    public async Task StartAsync()
     {
         _runEvent.Set();
+        _ = Task.Run(LoopAsync);
+        await Task.CompletedTask.ConfigureAwait(false);
     }
 
     public void Stop()
@@ -27,7 +34,7 @@ public sealed class LifeSignService : IDisposable
         _runEvent.Reset();
     }
 
-    private async Task BackgroundLoop()
+    private async Task LoopAsync()
     {
         while (!_cts.Token.IsCancellationRequested)
         {
@@ -36,25 +43,17 @@ public sealed class LifeSignService : IDisposable
             {
                 break;
             }
-            
+
             _lifeSignWriter.WriteLifeSign();
-            
+
             try
             {
-                await Task.Delay(_config.UpdatePeriod, _cts.Token);
+                await Task.Delay(_config.UpdatePeriod, _cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
                 break;
             }
         }
-    }
-
-    public void Dispose()
-    {
-        _cts.Cancel();
-        _backgroundTask.Wait();
-        _cts.Dispose();
-        _runEvent.Dispose();
     }
 }

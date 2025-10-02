@@ -7,7 +7,7 @@ namespace AttendanceRecorder.ConsoleApp;
 
 public static class Program
 {
-    public static void Main()
+    public static async Task Main()
     {
         var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((_, config) =>
@@ -20,8 +20,8 @@ public static class Program
             })
             .Build();
 
-        var lifeSignService = host.Services.GetRequiredService<LifeSignService>();
-        lifeSignService.Start();
+        await using var lifeSignService = host.Services.GetRequiredService<LifeSignService>();
+        await lifeSignService.StartAsync().ConfigureAwait(false);
 
         Console.Read();
     }
