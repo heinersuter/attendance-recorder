@@ -12,12 +12,11 @@ public static class Program
         var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((_, config) =>
             {
-                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                config.AddJsonFile("appsettings.json", false);
             })
             .ConfigureServices((context, services) =>
             {
                 services.UseLifeSign(context);
-                services.Configure<LifeSignConfig>(context.Configuration.GetSection("LifeSignConfig"));
             })
             .Build();
 
