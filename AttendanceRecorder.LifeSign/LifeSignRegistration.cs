@@ -9,6 +9,5 @@ public static class LifeSignRegistration
     {
         services.Configure<LifeSignConfig>(context.Configuration.GetSection("LifeSignConfig"));
         services.AddTransient<LifeSignService>();
-        services.AddTransient<LifeSignWriter>();
     }
 }

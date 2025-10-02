@@ -1,21 +1,20 @@
-﻿using System.ComponentModel;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace AttendanceRecorder.LifeSign;
 
-public class LifeSignService
+public sealed class LifeSignService : IDisposable
 {
     private readonly LifeSignWriter _lifeSignWriter;
     private readonly LifeSignConfig _config;
-    private readonly BackgroundWorker _backgroundWorker = new();
-    private readonly ManualResetEvent _runEvent = new(false);
+    private readonly ManualResetEventSlim _runEvent = new(false);
+    private readonly CancellationTokenSource _cts = new();
+    private readonly Task _backgroundTask;
 
-    public LifeSignService(IOptions<LifeSignConfig> lifeSignConfigOptions, LifeSignWriter lifeSignWriter)
+    public LifeSignService(IOptions<LifeSignConfig> lifeSignConfigOptions)
     {
-        _lifeSignWriter = lifeSignWriter;
         _config = lifeSignConfigOptions.Value;
-        _backgroundWorker.DoWork += BackgroundWorkerOnDoWork;
-        _backgroundWorker.RunWorkerAsync();
+        _lifeSignWriter = new LifeSignWriter(_config);
+        _backgroundTask = Task.Run(BackgroundLoop);
     }
 
     public void Start()
@@ -28,16 +27,34 @@ public class LifeSignService
         _runEvent.Reset();
     }
 
-    private void BackgroundWorkerOnDoWork(object? sender, DoWorkEventArgs doWorkEventArgs)
+    private async Task BackgroundLoop()
     {
-        while (_backgroundWorker.IsBusy)
+        while (!_cts.Token.IsCancellationRequested)
         {
-            if (_runEvent.WaitOne())
+            _runEvent.Wait(_cts.Token);
+            if (_cts.Token.IsCancellationRequested)
             {
-                _lifeSignWriter.WriteLifeSign();
+                break;
             }
-
-            Thread.Sleep(_config.UpdatePeriod);
+            
+            _lifeSignWriter.WriteLifeSign();
+            
+            try
+            {
+                await Task.Delay(_config.UpdatePeriod, _cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                break;
+            }
         }
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _backgroundTask.Wait();
+        _cts.Dispose();
+        _runEvent.Dispose();
     }
 }
