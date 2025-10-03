@@ -1,4 +1,5 @@
-﻿using AttendanceRecorder.LifeSign;
+﻿using AttendanceRecorder.FileSystemStorage;
+using AttendanceRecorder.LifeSign;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,12 +17,13 @@ public static class Program
             })
             .ConfigureServices((context, services) =>
             {
+                services.UseFileSystemStorage(context);
                 services.UseLifeSign(context);
             })
             .Build();
 
         await using var lifeSignService = host.Services.GetRequiredService<LifeSignService>();
-        await lifeSignService.StartAsync().ConfigureAwait(false);
+        await lifeSignService.StartAsync();
 
         Console.Read();
     }
