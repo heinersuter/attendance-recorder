@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "AttendanceRecorder.ConsoleApp": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5225",
+      "launchUrl": "swagger"
+    }
+  }
+}
+

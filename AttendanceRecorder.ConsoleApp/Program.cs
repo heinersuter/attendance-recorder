@@ -1,30 +1,21 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace AttendanceRecorder.ConsoleApp;
+var builder = WebApplication.CreateBuilder();
 
-public static class Program
-{
-    public static async Task Main()
-    {
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((_, config) =>
-            {
-                config.AddJsonFile("appsettings.json", false);
-            })
-            .ConfigureServices((context, services) =>
-            {
-                services.UseFileSystemStorage(context);
-                services.UseLifeSign(context);
-            })
-            .Build();
+// Add services to the container.
+builder.Services.UseFileSystemStorage(builder.Configuration);
+builder.Services.UseLifeSign(builder.Configuration);
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
-        await using var lifeSignService = host.Services.GetRequiredService<LifeSignService>();
-        await lifeSignService.StartAsync();
+// Run application
+var app = builder.Build();
+app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 
-        Console.Read();
-    }
-}
+var lifeSignService = app.Services.GetRequiredService<LifeSignService>();
+await lifeSignService.StartAsync();
+
+await app.RunAsync();

@@ -6,9 +6,9 @@ namespace AttendanceRecorder.LifeSign;
 
 public static class LifeSignRegistration
 {
-    public static void UseLifeSign(this IServiceCollection services, HostBuilderContext context)
+    public static void UseLifeSign(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<LifeSignConfig>(context.Configuration.GetRequiredSection(nameof(LifeSignConfig)[..^6]));
+        services.Configure<LifeSignConfig>(configuration.GetRequiredSection(nameof(LifeSignConfig)[..^6]));
         services.AddTransient<LifeSignService>();
     }
 }
