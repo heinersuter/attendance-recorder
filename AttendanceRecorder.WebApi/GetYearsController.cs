@@ -10,7 +10,7 @@ public class GetYearsController(LifeSignReaderService lifeSignReaderService) : C
     [HttpGet]
     public IActionResult GetYears()
     {
-        var years = lifeSignReaderService.GetYears();
+        var years = lifeSignReaderService.GetYears().OrderByDescending(year => year);
         return Ok(years);
     }
 }

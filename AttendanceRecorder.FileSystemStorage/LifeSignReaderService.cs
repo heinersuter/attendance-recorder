@@ -10,11 +10,40 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
         return Directory
             .GetDirectories(config.Value.Directory)
             .Select(Path.GetFileName)
-            .Select(int.Parse!)
-            .OrderByDescending(y => y);
+            .Select(int.Parse!);
     }
 
-    public IEnumerable<DateOnly> GetDatesByYear(int year)
+    public IEnumerable<int> GetWeeksByYear(int year)
+    {
+        return GetDatesByYear(year)
+            .Select(GetWeekOfYear)
+            .Distinct();
+    }
+
+    public IEnumerable<DateOnly> GetDatesByWeek(int year, int week)
+    {
+        return GetDatesByYear(year)
+            .Where(date => GetWeekOfYear(date) == week);
+    }
+
+    public IEnumerable<TimeOnly> GetLifeSigns(DateOnly date)
+    {
+        var filePath = Path.Combine(
+            config.Value.Directory,
+            date.Year.ToString(CultureInfo.InvariantCulture),
+            $"{date.Month:D2}-{date.Day:D2}.attrec");
+
+        if (!File.Exists(filePath))
+        {
+            return [];
+        }
+
+        return File
+            .ReadAllLines(filePath)
+            .Select(line => TimeOnly.ParseExact(line, "HH:mm:ss", CultureInfo.InvariantCulture));
+    }
+
+    private IEnumerable<DateOnly> GetDatesByYear(int year)
     {
         var yearDirectory = Path.Combine(config.Value.Directory, year.ToString(CultureInfo.InvariantCulture));
         if (!Directory.Exists(yearDirectory))
@@ -25,14 +54,6 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
         return Directory
             .GetFiles(yearDirectory, "*.attrec")
             .Select(filePath => ToDateOnly(year, filePath));
-    }
-
-    public IEnumerable<int> GetWeeksByYear(int year)
-    {
-        return GetDatesByYear(year)
-            .Select(GetWeekOfYear)
-            .Distinct()
-            .OrderBy(week => week);
     }
 
     private static int GetWeekOfYear(DateOnly date)

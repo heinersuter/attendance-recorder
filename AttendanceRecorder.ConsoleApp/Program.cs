@@ -1,11 +1,14 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
+using AttendanceRecorder.WebApi.Model;
 
 var builder = WebApplication.CreateBuilder();
 
 // Add services to the container.
-builder.Services.UseFileSystemStorage(builder.Configuration);
-builder.Services.UseLifeSign(builder.Configuration);
+builder.Services.AddFileSystemStorage(builder.Configuration);
+builder.Services.AddLifeSign(builder.Configuration);
+builder.Services.AddWorkingDay(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 

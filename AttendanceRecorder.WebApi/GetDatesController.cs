@@ -4,14 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace AttendanceRecorder.WebApi;
 
 [ApiController]
-[Route("api/years/{year:int}/dates")]
+[Route("api/years/{year:int}/weeks/{week:int}")]
 public class GetDatesController(LifeSignReaderService readerService) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<string>> GetDates([FromRoute] int year)
+    public ActionResult<IEnumerable<DateOnly>> GetDates([FromRoute] int year, [FromRoute] int week)
     {
-        var dates = readerService.GetDatesByYear(year);
-
+        var dates = readerService.GetDatesByWeek(year, week).OrderByDescending(date => date);
         return Ok(dates);
     }
 }

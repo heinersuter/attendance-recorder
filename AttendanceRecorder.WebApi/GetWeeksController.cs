@@ -10,8 +10,7 @@ namespace AttendanceRecorder.WebApi
         [HttpGet]
         public ActionResult<IEnumerable<int>> GetWeeks([FromRoute] int year)
         {
-            var weeks = readerService.GetWeeksByYear(year);
-
+            var weeks = readerService.GetWeeksByYear(year).OrderByDescending(week => week);
             return Ok(weeks);
         }
     }
