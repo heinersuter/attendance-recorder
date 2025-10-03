@@ -10,11 +10,7 @@ public class GetDatesController(LifeSignReaderService readerService) : Controlle
     [HttpGet]
     public ActionResult<IEnumerable<string>> GetDates([FromRoute] int year)
     {
-        var dates = readerService.GetDates(year);
-        if (!dates.Any())
-        {
-            return NotFound($"No dates found for year '{year}'.");
-        }
+        var dates = readerService.GetDatesByYear(year);
 
         return Ok(dates);
     }
