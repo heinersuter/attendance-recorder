@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AttendanceRecorder.WebApi.Model;
+namespace AttendanceRecorder.WebApi.WorkingDay;
 
 public static class WorkingDayRegistration
 {

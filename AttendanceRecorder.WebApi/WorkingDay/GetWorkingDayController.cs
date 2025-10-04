@@ -1,7 +1,7 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AttendanceRecorder.WebApi.Model;
+namespace AttendanceRecorder.WebApi.WorkingDay;
 
 [ApiController]
 [Route("api/work-days/{date}")]
@@ -9,7 +9,7 @@ public class GetWorkingDayController(WorkingDayService workingDayService, LifeSi
     : ControllerBase
 {
     [HttpGet]
-    public ActionResult<WorkingDay> GetWorkingDay([FromRoute] DateOnly date)
+    public ActionResult<WorkingDayDto> GetWorkingDay([FromRoute] DateOnly date)
     {
         var lifeSigns = lifeSignReaderService.GetLifeSigns(date).OrderBy(ls => ls);
         var workingDay = workingDayService.Build(date, lifeSigns);

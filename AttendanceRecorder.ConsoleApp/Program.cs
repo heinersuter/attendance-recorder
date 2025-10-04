@@ -1,6 +1,6 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
-using AttendanceRecorder.WebApi.Model;
+using AttendanceRecorder.WebApi.WorkingDay;
 
 var builder = WebApplication.CreateBuilder();
 

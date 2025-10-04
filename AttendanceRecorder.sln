@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		AttendanceRecorder.sln.DotSettings = AttendanceRecorder.sln.DotSettings
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttendanceRecorder.WebApi.UnitTests", "AttendanceRecorder.WebApi.UnitTests\AttendanceRecorder.WebApi.UnitTests.csproj", "{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +39,9 @@ Global
 		{5286935F-78DC-4621-A09C-AB636BDFE2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5286935F-78DC-4621-A09C-AB636BDFE2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5286935F-78DC-4621-A09C-AB636BDFE2B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

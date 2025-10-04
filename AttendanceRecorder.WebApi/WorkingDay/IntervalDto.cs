@@ -1,6 +1,6 @@
-namespace AttendanceRecorder.WebApi.Model;
+namespace AttendanceRecorder.WebApi.WorkingDay;
 
-public class Interval
+public class IntervalDto
 {
     public required bool IsActive { get; init; }
 
