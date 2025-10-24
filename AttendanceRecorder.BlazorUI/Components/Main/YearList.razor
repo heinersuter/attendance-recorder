@@ -1,0 +1,26 @@
+﻿<h3>Years</h3>
+
+@if (_years == null)
+{
+    <p>Loading years</p>
+}
+else
+{
+    <ul>
+        @foreach (var year in _years)
+        {
+            <li>@year</li>
+        }
+    </ul>
+}
+
+@code {
+    private IEnumerable<int>? _years;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+
+        _years = [2023, 2024, 2025];
+    }
+}

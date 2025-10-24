@@ -1,24 +1,38 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
+using AttendanceRecorder.WebApi;
 using AttendanceRecorder.WebApi.WorkingDay;
 
-var builder = WebApplication.CreateBuilder();
+namespace AttendanceRecorder.ConsoleApp;
 
-// Add services to the container.
-builder.Services.AddFileSystemStorage(builder.Configuration);
-builder.Services.AddLifeSign(builder.Configuration);
-builder.Services.AddWorkingDay(builder.Configuration);
+public sealed class Program
+{
+    private Program()
+    {
+    }
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+    public static async Task Main()
+    {
+        var builder = WebApplication.CreateBuilder();
 
-// Run application
-var app = builder.Build();
-app.MapControllers();
-app.UseSwagger();
-app.UseSwaggerUI();
+        builder.Services.AddFileSystemStorage(builder.Configuration);
+        builder.Services.AddLifeSign(builder.Configuration);
+        builder.Services.AddWorkingDay(builder.Configuration);
 
-var lifeSignService = app.Services.GetRequiredService<LifeSignService>();
-await lifeSignService.StartAsync();
+        // Register controllers from WebApi assembly explicitly.
+        builder.Services.AddControllers().AddApplicationPart(typeof(GetYearsController).Assembly);
 
-await app.RunAsync();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        app.MapControllers();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        var lifeSignService = app.Services.GetRequiredService<LifeSignService>();
+        await lifeSignService.StartAsync();
+
+        await app.RunAsync();
+    }
+}
