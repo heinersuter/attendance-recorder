@@ -1,0 +1,3 @@
+﻿.week-list { max-width: 12rem; margin:0; padding:0; }
+.week-list li + li { margin-top: 0.5rem; }
+.week-btn { width:100%; }

@@ -32,6 +32,7 @@ else
     {
         var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
         _years = (await apiClient.YearsAsync()).OrderByDescending(y => y);
+        _selectedYear = _years.FirstOrDefault();
         if (_selectedYear.HasValue)
         {
             await SelectedYearChanged.InvokeAsync(_selectedYear.Value);
@@ -48,5 +49,4 @@ else
         _selectedYear = year;
         await SelectedYearChanged.InvokeAsync(year);
     }
-
 }

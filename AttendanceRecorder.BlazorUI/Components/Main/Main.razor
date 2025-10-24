@@ -3,10 +3,28 @@
 
 <h1>Attendance Recorder</h1>
 
-<YearList SelectedYearChanged="OnYearChanged" />
+<div class="d-flex gap-4 align-items-start">
+    <div>
+        <YearList SelectedYearChanged="OnYearChanged" />
+    </div>
+    <div>
+        <WeekList Year="_selectedYear" SelectedWeekChanged="OnWeekChanged" />
+    </div>
+</div>
 
 @code {
+    private int? _selectedYear;
+    private int? _selectedWeek;
+
     private void OnYearChanged(int year)
     {
+        _selectedYear = year;
+        _selectedWeek = null; // reset week when year changes
+    }
+
+    private void OnWeekChanged(int week)
+    {
+        _selectedWeek = week;
+        // Future: load dates for this week.
     }
 }
