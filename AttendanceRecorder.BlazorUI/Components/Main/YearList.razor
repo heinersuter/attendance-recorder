@@ -26,15 +26,27 @@ else
     private IEnumerable<int>? _years;
     private int? _selectedYear;
 
+    [Parameter] public EventCallback<int> SelectedYearChanged { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
         _years = (await apiClient.YearsAsync()).OrderByDescending(y => y);
-        _selectedYear = _years?.FirstOrDefault(); // auto-select first year if available
+        if (_selectedYear.HasValue)
+        {
+            await SelectedYearChanged.InvokeAsync(_selectedYear.Value);
+        }
     }
 
-    private void SelectYear(int year)
+    private async Task SelectYear(int year)
     {
+        if (_selectedYear == year)
+        {
+            return;
+        }
+
         _selectedYear = year;
+        await SelectedYearChanged.InvokeAsync(year);
     }
+
 }
