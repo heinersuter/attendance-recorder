@@ -6,28 +6,20 @@
 }
 else
 {
-    // Render an empty list silently if there are no years.
     <ul class="list-unstyled year-list">
-        @if (_years.Any())
+        @foreach (var year in _years)
         {
-            foreach (var year in _years)
-            {
-                <li>
-                    <button type="button"
-                            class="btn btn-sm year-btn @(year == _selectedYear ? "btn-primary" : "btn-outline-primary")"
-                            @onclick="() => SelectYear(year)"
-                            aria-pressed="@(year == _selectedYear)"
-                            aria-label="Select year @year">
-                        @year
-                    </button>
-                </li>
-            }
+            <li>
+                <button type="button"
+                        class="btn year-btn @(year == _selectedYear ? "btn-primary" : "btn-secondary")"
+                        @onclick="() => SelectYear(year)"
+                        aria-pressed="@(year == _selectedYear)"
+                        aria-label="Select year @year">
+                    @year
+                </button>
+            </li>
         }
     </ul>
-    @if (_selectedYear.HasValue)
-    {
-        <p class="mt-2">Selected year: <strong>@_selectedYear.Value</strong></p>
-    }
 }
 
 @code {
@@ -36,9 +28,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Yield();
         var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
         _years = (await apiClient.YearsAsync()).OrderByDescending(y => y);
+        _selectedYear = _years?.FirstOrDefault(); // auto-select first year if available
     }
 
     private void SelectYear(int year)
