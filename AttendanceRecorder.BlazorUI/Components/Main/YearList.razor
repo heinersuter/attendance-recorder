@@ -1,4 +1,5 @@
-﻿<h3>Years</h3>
+﻿@using AttendanceRecorder.Client
+<h3>Years</h3>
 
 @if (_years == null)
 {
@@ -21,6 +22,7 @@ else
     {
         await Task.Yield();
 
-        _years = [2023, 2024, 2025];
+        var apiClient = new ApiClient(" http://localhost:5225", new HttpClient());
+        _years = await apiClient.YearsAsync();
     }
 }
