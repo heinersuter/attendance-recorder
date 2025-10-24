@@ -1,28 +1,48 @@
-﻿@using AttendanceRecorder.Client
-<h3>Years</h3>
+﻿<h3>Years</h3>
 
 @if (_years == null)
 {
-    <p>Loading years</p>
+    <p>Loading years...</p>
 }
 else
 {
-    <ul>
-        @foreach (var year in _years)
+    // Render an empty list silently if there are no years.
+    <ul class="list-unstyled year-list">
+        @if (_years.Any())
         {
-            <li>@year</li>
+            foreach (var year in _years)
+            {
+                <li>
+                    <button type="button"
+                            class="btn btn-sm year-btn @(year == _selectedYear ? "btn-primary" : "btn-outline-primary")"
+                            @onclick="() => SelectYear(year)"
+                            aria-pressed="@(year == _selectedYear)"
+                            aria-label="Select year @year">
+                        @year
+                    </button>
+                </li>
+            }
         }
     </ul>
+    @if (_selectedYear.HasValue)
+    {
+        <p class="mt-2">Selected year: <strong>@_selectedYear.Value</strong></p>
+    }
 }
 
 @code {
     private IEnumerable<int>? _years;
+    private int? _selectedYear;
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Yield();
+        var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
+        _years = (await apiClient.YearsAsync()).OrderByDescending(y => y);
+    }
 
-        var apiClient = new ApiClient(" http://localhost:5225", new HttpClient());
-        _years = await apiClient.YearsAsync();
+    private void SelectYear(int year)
+    {
+        _selectedYear = year;
     }
 }

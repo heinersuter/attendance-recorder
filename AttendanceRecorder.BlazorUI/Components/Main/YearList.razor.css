@@ -1,0 +1,10 @@
+.year-list {
+  max-width: 12rem;
+  margin: 0;
+  padding: 0;
+}
+.year-list li + li { margin-top: 0.5rem; }
+.year-btn { width: 100%; text-align: left; }
+.year-btn.btn-outline-primary { background-color: #fff; }
+.year-btn.btn-primary { font-weight: 600; }
+

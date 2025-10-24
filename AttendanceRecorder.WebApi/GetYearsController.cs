@@ -1,5 +1,4 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AttendanceRecorder.WebApi;
@@ -9,7 +8,6 @@ namespace AttendanceRecorder.WebApi;
 public class GetYearsController(LifeSignReaderService lifeSignReaderService) : ControllerBase
 {
     [HttpGet]
-    ////[ProducesResponseType(typeof(IEnumerable<int>), StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<int>> GetYears()
     {
         var years = lifeSignReaderService.GetYears().OrderByDescending(year => year);
