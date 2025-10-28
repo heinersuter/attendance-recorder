@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using AttendanceRecorder.BlazorUi.Components;
+using AttendanceRecorder.Client;
 using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
 using AttendanceRecorder.WebApi;
@@ -26,6 +27,10 @@ public sealed class Program
         builder.Services.AddControllers().AddApplicationPart(typeof(GetYearsController).Assembly);
         builder.Services.AddRazorComponents().AddInteractiveServerComponents();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped(_ => new HttpClient());
+        builder.Services.AddScoped<ApiClient>(services =>
+            new ApiClient(builder.WebHost.GetSetting("urls"), services.GetRequiredService<HttpClient>()));
 
         var app = builder.Build();
 

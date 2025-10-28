@@ -1,4 +1,6 @@
-﻿<h2>Years</h2>
+﻿@inject ApiClient ApiClient
+
+<h2>Years</h2>
 
 @if (_years == null)
 {
@@ -30,8 +32,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
-        _years = (await apiClient.YearsAsync()).OrderByDescending(y => y);
+        _years = (await ApiClient.YearsAsync())
+            .OrderByDescending(y => y);
         _selectedYear = _years.FirstOrDefault();
         if (_selectedYear.HasValue)
         {

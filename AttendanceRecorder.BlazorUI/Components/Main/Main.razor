@@ -26,11 +26,14 @@
     private void ChangeYear(int year)
     {
         _selectedYear = year;
+        _selectedWeek = null;
+        _selectedDate = null;
     }
 
     private void ChangeWeek(int week)
     {
         _selectedWeek = week;
+        _selectedDate = null;
     }
 
     private void ChangeDate(DateOnly date)

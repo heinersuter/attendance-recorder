@@ -1,4 +1,6 @@
-﻿<h2>Dates</h2>
+﻿@inject ApiClient ApiClient
+
+<h2>Dates</h2>
 
 @if (_dates == null)
 {
@@ -45,8 +47,7 @@ else
 
         if (_loadedYear != Year || _loadedWeek != Week)
         {
-            var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
-            _dates = (await apiClient.WeeksAsync(Year.Value, Week.Value))
+            _dates = (await ApiClient.WeeksAsync(Year.Value, Week.Value))
                 .Select(dt => DateOnly.FromDateTime(dt.Date))
                 .OrderByDescending(d => d);
             _selectedDate = _dates.FirstOrDefault();

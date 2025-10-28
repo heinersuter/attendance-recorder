@@ -1,4 +1,6 @@
-﻿<h2>Working Day</h2>
+﻿@inject ApiClient ApiClient
+
+<h2>Working Day</h2>
 
 @if (_workingDay == null)
 {
@@ -25,8 +27,7 @@ else
 
         if (_loadedDate != Date)
         {
-            var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
-            _workingDay = await apiClient.WorkDaysAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
+            _workingDay = await ApiClient.WorkDaysAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
             _loadedDate = Date;
         }
     }
