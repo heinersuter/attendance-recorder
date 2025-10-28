@@ -1,0 +1,73 @@
+﻿<h2>Dates</h2>
+
+@if (_dates == null)
+{
+    <p>Loading weeks...</p>
+}
+else
+{
+    <ul class="list-unstyled selection-list">
+        @foreach (var date in _dates)
+        {
+            <li>
+                <button type="button"
+                        class="btn selection-list-btn @(date == _selectedDate ? "btn-primary" : "btn-secondary")"
+                        @onclick="() => SelectDate(date)"
+                        aria-pressed="@(date == _selectedDate)"
+                        aria-label="Select date @date">
+                    @date
+                </button>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter] public int? Year { get; set; }
+    [Parameter] public int? Week { get; set; }
+    [Parameter] public EventCallback<DateOnly> SelectedDateChanged { get; set; }
+
+    private IEnumerable<DateOnly>? _dates;
+    private DateOnly? _selectedDate;
+    private int? _loadedYear;
+    private int? _loadedWeek;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Year == null || Week == null)
+        {
+            _dates = null;
+            _selectedDate = null;
+            _loadedYear = null;
+            _loadedWeek = null;
+            return;
+        }
+
+        if (_loadedYear != Year || _loadedWeek != Week)
+        {
+            var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
+            _dates = (await apiClient.WeeksAsync(Year.Value, Week.Value))
+                .Select(dt => DateOnly.FromDateTime(dt.Date))
+                .OrderByDescending(d => d);
+            _selectedDate = _dates.FirstOrDefault();
+            _loadedYear = Year;
+            _loadedWeek = Week;
+            if (_selectedDate.HasValue)
+            {
+                await SelectedDateChanged.InvokeAsync(_selectedDate.Value);
+            }
+        }
+    }
+
+    private async Task SelectDate(DateOnly date)
+    {
+        if (_selectedDate == date)
+        {
+            return;
+        }
+
+        _selectedDate = date;
+        await SelectedDateChanged.InvokeAsync(date);
+    }
+
+}

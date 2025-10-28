@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AttendanceRecorder.ConsoleApp\AttendanceRecorder.ConsoleApp.csproj" />
+      <ProjectReference Include="..\AttendanceRecorder.WebApi\AttendanceRecorder.WebApi.csproj" />
     </ItemGroup>
 
 </Project>

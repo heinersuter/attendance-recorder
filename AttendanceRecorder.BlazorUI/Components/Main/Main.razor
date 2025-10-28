@@ -5,10 +5,13 @@
 
 <div class="d-flex gap-4 align-items-start">
     <div>
-        <YearList SelectedYearChanged="OnYearChanged" />
+        <YearList SelectedYearChanged="OnYearChanged"/>
     </div>
     <div>
-        <WeekList Year="_selectedYear" SelectedWeekChanged="OnWeekChanged" />
+        <WeekList Year="_selectedYear" SelectedWeekChanged="OnWeekChanged"/>
+    </div>
+    <div>
+        <DateList Year="_selectedYear" Week="_selectedWeek"/>
     </div>
 </div>
 
@@ -25,6 +28,6 @@
     private void OnWeekChanged(int week)
     {
         _selectedWeek = week;
-        // Future: load dates for this week.
     }
+
 }
