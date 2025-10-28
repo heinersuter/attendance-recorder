@@ -7,7 +7,7 @@ namespace AttendanceRecorder.WebApi;
 [Route("api/years")]
 public class GetYearsController(LifeSignReaderService lifeSignReaderService) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = nameof(GetYears))]
     public ActionResult<IEnumerable<int>> GetYears()
     {
         var years = lifeSignReaderService.GetYears().OrderByDescending(year => year);

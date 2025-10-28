@@ -27,7 +27,7 @@ else
 
         if (_loadedDate != Date)
         {
-            _workingDay = await ApiClient.WorkDaysAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
+            _workingDay = await ApiClient.GetWorkingDayAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
             _loadedDate = Date;
         }
     }

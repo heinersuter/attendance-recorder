@@ -32,7 +32,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _years = (await ApiClient.YearsAsync())
+        _years = (await ApiClient.GetYearsAsync())
             .OrderByDescending(y => y);
         _selectedYear = _years.FirstOrDefault();
         if (_selectedYear.HasValue)

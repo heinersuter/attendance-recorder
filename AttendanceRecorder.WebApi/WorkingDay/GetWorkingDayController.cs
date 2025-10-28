@@ -8,7 +8,7 @@ namespace AttendanceRecorder.WebApi.WorkingDay;
 public class GetWorkingDayController(WorkingDayService workingDayService, LifeSignReaderService lifeSignReaderService)
     : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = nameof(GetWorkingDay))]
     public ActionResult<WorkingDayDto> GetWorkingDay([FromRoute] DateOnly date)
     {
         var lifeSigns = lifeSignReaderService.GetLifeSigns(date).OrderBy(ls => ls);

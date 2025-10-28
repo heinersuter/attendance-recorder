@@ -44,7 +44,7 @@ else
 
         if (_loadedYear != Year)
         {
-            _weeks = (await ApiClient.Weeks2Async(Year.Value))
+            _weeks = (await ApiClient.GetWeeksAsync(Year.Value))
                 .OrderByDescending(w => w);
             _selectedWeek = _weeks.FirstOrDefault();
             _loadedYear = Year;

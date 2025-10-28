@@ -7,7 +7,7 @@ namespace AttendanceRecorder.WebApi;
 [Route("api/years/{year:int}/weeks/{week:int}")]
 public class GetDatesController(LifeSignReaderService readerService) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet(Name = nameof(GetDates))]
     public ActionResult<IEnumerable<DateOnly>> GetDates([FromRoute] int year, [FromRoute] int week)
     {
         var dates = readerService.GetDatesByWeek(year, week).OrderByDescending(date => date);

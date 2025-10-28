@@ -74,15 +74,15 @@ namespace AttendanceRecorder.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.DateTimeOffset>> WeeksAsync(int year, int week)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.DateTimeOffset>> GetDatesAsync(int year, int week)
         {
-            return WeeksAsync(year, week, System.Threading.CancellationToken.None);
+            return GetDatesAsync(year, week, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.DateTimeOffset>> WeeksAsync(int year, int week, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<System.DateTimeOffset>> GetDatesAsync(int year, int week, System.Threading.CancellationToken cancellationToken)
         {
             if (year == null)
                 throw new System.ArgumentNullException("year");
@@ -161,15 +161,15 @@ namespace AttendanceRecorder.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> Weeks2Async(int year)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> GetWeeksAsync(int year)
         {
-            return Weeks2Async(year, System.Threading.CancellationToken.None);
+            return GetWeeksAsync(year, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> Weeks2Async(int year, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> GetWeeksAsync(int year, System.Threading.CancellationToken cancellationToken)
         {
             if (year == null)
                 throw new System.ArgumentNullException("year");
@@ -244,15 +244,15 @@ namespace AttendanceRecorder.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<WorkingDayDto> WorkDaysAsync(System.DateTimeOffset date)
+        public virtual System.Threading.Tasks.Task<WorkingDayDto> GetWorkingDayAsync(System.DateTimeOffset date)
         {
-            return WorkDaysAsync(date, System.Threading.CancellationToken.None);
+            return GetWorkingDayAsync(date, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<WorkingDayDto> WorkDaysAsync(System.DateTimeOffset date, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<WorkingDayDto> GetWorkingDayAsync(System.DateTimeOffset date, System.Threading.CancellationToken cancellationToken)
         {
             if (date == null)
                 throw new System.ArgumentNullException("date");
@@ -326,15 +326,15 @@ namespace AttendanceRecorder.Client
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> YearsAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> GetYearsAsync()
         {
-            return YearsAsync(System.Threading.CancellationToken.None);
+            return GetYearsAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> YearsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<int>> GetYearsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;

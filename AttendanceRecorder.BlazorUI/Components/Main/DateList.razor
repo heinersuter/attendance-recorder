@@ -47,7 +47,7 @@ else
 
         if (_loadedYear != Year || _loadedWeek != Week)
         {
-            _dates = (await ApiClient.WeeksAsync(Year.Value, Week.Value))
+            _dates = (await ApiClient.GetDatesAsync(Year.Value, Week.Value))
                 .Select(dt => DateOnly.FromDateTime(dt.Date))
                 .OrderByDescending(d => d);
             _selectedDate = _dates.FirstOrDefault();
