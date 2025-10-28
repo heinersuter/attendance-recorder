@@ -5,29 +5,36 @@
 
 <div class="d-flex gap-4 align-items-start">
     <div>
-        <YearList SelectedYearChanged="OnYearChanged"/>
+        <YearList SelectedYearChanged="ChangeYear"/>
     </div>
     <div>
-        <WeekList Year="_selectedYear" SelectedWeekChanged="OnWeekChanged"/>
+        <WeekList Year="_selectedYear" SelectedWeekChanged="ChangeWeek"/>
     </div>
     <div>
-        <DateList Year="_selectedYear" Week="_selectedWeek"/>
+        <DateList Year="_selectedYear" Week="_selectedWeek" SelectedDateChanged="ChangeDate"/>
+    </div>
+    <div>
+        <WorkingDay Date="_selectedDate"></WorkingDay>
     </div>
 </div>
 
 @code {
     private int? _selectedYear;
     private int? _selectedWeek;
+    private DateOnly? _selectedDate;
 
-    private void OnYearChanged(int year)
+    private void ChangeYear(int year)
     {
         _selectedYear = year;
-        _selectedWeek = null; // reset week when year changes
     }
 
-    private void OnWeekChanged(int week)
+    private void ChangeWeek(int week)
     {
         _selectedWeek = week;
     }
 
+    private void ChangeDate(DateOnly date)
+    {
+        _selectedDate = date;
+    }
 }

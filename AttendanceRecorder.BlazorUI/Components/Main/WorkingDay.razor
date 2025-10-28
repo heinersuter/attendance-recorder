@@ -1,0 +1,33 @@
+﻿<h2>Working Day</h2>
+
+@if (_workingDay == null)
+{
+    <p>Loading working day...</p>
+}
+else
+{
+    <p>@_workingDay.Date</p>
+}
+
+@code {
+    [Parameter] public DateOnly? Date { get; set; }
+
+    private DateOnly? _loadedDate;
+    private WorkingDayDto? _workingDay;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Date == null)
+        {
+            _loadedDate = null;
+            return;
+        }
+
+        if (_loadedDate != Date)
+        {
+            var apiClient = new ApiClient("http://localhost:5225", new HttpClient());
+            _workingDay = await apiClient.WorkDaysAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
+            _loadedDate = Date;
+        }
+    }
+}
