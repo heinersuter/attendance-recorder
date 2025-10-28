@@ -1,4 +1,4 @@
-﻿<h3>Years</h3>
+﻿<h2>Years</h2>
 
 @if (_years == null)
 {
@@ -6,12 +6,12 @@
 }
 else
 {
-    <ul class="list-unstyled year-list">
+    <ul class="list-unstyled selection-list">
         @foreach (var year in _years)
         {
             <li>
                 <button type="button"
-                        class="btn year-btn @(year == _selectedYear ? "btn-primary" : "btn-secondary")"
+                        class="btn selection-list-btn @(year == _selectedYear ? "btn-primary" : "btn-secondary")"
                         @onclick="() => SelectYear(year)"
                         aria-pressed="@(year == _selectedYear)"
                         aria-label="Select year @year">
