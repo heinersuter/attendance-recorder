@@ -8,7 +8,19 @@
 }
 else
 {
-    <p>@_workingDay.Date</p>
+    <table>
+        <tbody>
+            @foreach (var interval in _workingDay.Intervals)
+            {
+                <tr class="@(interval.IsActive ? string.Empty : "text-gray")">
+                    <td>@interval.Start</td>
+                    <td> ... </td>
+                    <td>@interval.End</td>
+                    <td>@(interval.IsActive ? " (active) " : " (inactive) ")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
