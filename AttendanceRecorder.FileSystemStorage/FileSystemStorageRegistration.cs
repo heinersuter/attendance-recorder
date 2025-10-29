@@ -11,5 +11,7 @@ public static class FileSystemStorageRegistration
         services.Configure<LifeSignConfig>(configuration.GetRequiredSection(nameof(LifeSignConfig)[..^6]));
         services.AddTransient<LifeSignWriterService>();
         services.AddTransient<LifeSignReaderService>();
+        services.AddTransient<MergeWriterService>();
+        services.AddTransient<MergeReaderService>();
     }
 }

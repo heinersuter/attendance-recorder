@@ -7,4 +7,6 @@ public class IntervalDto
     public required TimeOnly Start { get; init; }
 
     public required TimeOnly End { get; init; }
+
+    public TimeSpan Duration => End - Start;
 }

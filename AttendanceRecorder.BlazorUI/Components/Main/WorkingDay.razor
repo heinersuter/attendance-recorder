@@ -8,19 +8,27 @@
 }
 else
 {
-    <table>
-        <tbody>
+    <div class="table-responsive">
+        <table class="w-100">
+            <tbody>
             @foreach (var interval in _workingDay.Intervals)
             {
                 <tr class="@(interval.IsActive ? string.Empty : "text-gray")">
                     <td>@interval.Start</td>
-                    <td> ... </td>
+                    <td>...</td>
                     <td>@interval.End</td>
-                    <td>@(interval.IsActive ? " (active) " : " (inactive) ")</td>
+                    <td>@interval.Duration</td>
+                    <td>@(interval.IsActive ? "(active)" : "(inactive)")</td>
+                    <td>
+                        <button type="button" class="btn" title="Delete">
+                            <span class="bi bi-x-circle"></span>
+                        </button>
+                    </td>
                 </tr>
             }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
