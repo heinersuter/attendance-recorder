@@ -1,16 +1,23 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
+using AttendanceRecorder.WebApi.WorkingDay;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AttendanceRecorder.WebApi;
 
 [ApiController]
-[Route("api/work-days/{date}/merges")]
-public class PostMergeController(MergeWriterService writerService) : ControllerBase
+[Route("api/working-days/{date}/merges")]
+public class PostMergeController(WorkingDayService workingDayService, MergeWriterService writerService) : ControllerBase
 {
     [HttpPost(Name = nameof(PostMerge))]
-    public ActionResult PostMerge([FromRoute] DateOnly date, [FromQuery] TimeOnly start, [FromQuery] TimeOnly end)
+    public ActionResult<WorkingDayDto> PostMerge(
+        [FromRoute] DateOnly date,
+        [FromQuery] TimeOnly start,
+        [FromQuery] TimeOnly end)
     {
         writerService.WriteMerge(date, start, end);
-        return Ok();
+
+        var workingDay = workingDayService.Build(date);
+
+        return Ok(workingDay);
     }
 }

@@ -20,7 +20,7 @@ else
                     <td>@interval.Duration</td>
                     <td>@(interval.IsActive ? "(active)" : "(inactive)")</td>
                     <td>
-                        <button type="button" class="btn" title="Delete">
+                        <button type="button" class="btn" @onclick="() => DeleteInterval(interval)" title="Delete">
                             <span class="bi bi-x-circle"></span>
                         </button>
                     </td>
@@ -41,6 +41,7 @@ else
     {
         if (Date == null)
         {
+            _workingDay = null;
             _loadedDate = null;
             return;
         }
@@ -50,5 +51,16 @@ else
             _workingDay = await ApiClient.GetWorkingDayAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
             _loadedDate = Date;
         }
+    }
+    
+    private async Task DeleteInterval(IntervalDto interval)
+    {
+        if (interval.IsActive)
+        {
+            // Deleting inactive intervals not yet implemented
+            return;
+        }
+
+        _workingDay = await ApiClient.PostMergeAsync(Date!.Value.ToDateTime(TimeOnly.MinValue), interval.Start, interval.End);
     }
 }
