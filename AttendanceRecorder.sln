@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 		AttendanceRecorder.sln.DotSettings = AttendanceRecorder.sln.DotSettings
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttendanceRecorder.WebApi.UnitTests", "AttendanceRecorder.WebApi.UnitTests\AttendanceRecorder.WebApi.UnitTests.csproj", "{98FCD1A3-B6C0-485F-ACCF-C8AE9068777E}"

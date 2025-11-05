@@ -6,4 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AttendanceRecorder.FileSystemStorage\AttendanceRecorder.FileSystemStorage.csproj" />
+      <ProjectReference Include="..\AttendanceRecorder.LifeSign\AttendanceRecorder.LifeSign.csproj" />
+      <ProjectReference Include="..\AttendanceRecorder.WebApi\AttendanceRecorder.WebApi.csproj" />
+    </ItemGroup>
+
 </Project>
