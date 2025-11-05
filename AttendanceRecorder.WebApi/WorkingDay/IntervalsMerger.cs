@@ -6,42 +6,112 @@ public class IntervalsMerger(LifeSignConfig config)
 {
     private readonly TimeSpan _maxBreak = 2 * config.UpdatePeriod;
 
-    public IEnumerable<IntervalDto> MergeIntervals(
+    public IEnumerable<IntervalDto> MergeActiveIntervals(
         IEnumerable<IntervalDto> activeIntervals,
-        IEnumerable<(TimeOnly Start, TimeOnly End)> merges)
+        IEnumerable<(TimeOnly Start, TimeOnly End)> activeMerges)
     {
-        return MergeIntervals(activeIntervals
-            .Concat(merges.Select(merge => new IntervalDto { Start = merge.Start, End = merge.End, IsActive = true }))
-            .ToList());
+        return activeIntervals
+            .Concat(activeMerges.Select(merge =>
+                new IntervalDto { Start = merge.Start, End = merge.End, IsActive = true }))
+            .OrderBy(i => i.Start)
+            .Aggregate(
+                new List<IntervalDto>(),
+                (intervals, current) =>
+                {
+                    if (intervals.Count == 0)
+                    {
+                        // Add initial interval
+                        intervals.Add(current);
+                    }
+                    else
+                    {
+                        var last = intervals[^1];
+                        if (current.Start <= last.End.Add(_maxBreak))
+                        {
+                            // Merge with the last interval
+                            intervals[^1] = new IntervalDto
+                            {
+                                Start = last.Start,
+                                End = current.End > last.End ? current.End : last.End,
+                                IsActive = true,
+                            };
+                        }
+                        else
+                        {
+                            // Add new interval
+                            intervals.Add(current);
+                        }
+                    }
+
+                    return intervals;
+                }).ToList();
     }
 
-    private IEnumerable<IntervalDto> MergeIntervals(IEnumerable<IntervalDto> activeIntervals)
+    public IEnumerable<IntervalDto> MergeInactiveIntervals(
+        IEnumerable<IntervalDto> activeIntervals,
+        IEnumerable<(TimeOnly Start, TimeOnly End)> inactiveMerges)
     {
-        var sortedIntervals = activeIntervals.OrderBy(i => i.Start).ToList();
-        if (sortedIntervals.Count == 0)
-        {
-            yield break;
-        }
+        var intervals = activeIntervals.ToList();
 
-        var current = sortedIntervals[0];
-        for (var i = 1; i < sortedIntervals.Count; i++)
+        foreach (var merge in inactiveMerges)
         {
-            var next = sortedIntervals[i];
-            if (next.Start <= current.End.Add(_maxBreak))
+            var intervalsToRemove = new List<IntervalDto>();
+            var intervalsToAdd = new List<IntervalDto>();
+
+            foreach (var interval in intervals)
             {
-                // Merge intervals
-                current = new IntervalDto
+                if (merge.Start <= interval.Start && merge.End >= interval.End)
                 {
-                    Start = current.Start, End = next.End > current.End ? next.End : current.End, IsActive = true,
-                };
+                    // Active interval completely covered by inactive merge
+                    intervalsToRemove.Add(interval);
+                    continue;
+                }
+
+                if (merge.Start > interval.Start && merge.End < interval.End)
+                {
+                    // Active interval spans inactive merge, split into two
+                    intervalsToRemove.Add(interval);
+                    intervalsToAdd.Add(new IntervalDto
+                    {
+                        Start = interval.Start, End = merge.Start.Add(TimeSpan.FromSeconds(-1)), IsActive = true,
+                    });
+                    intervalsToAdd.Add(new IntervalDto
+                    {
+                        Start = merge.End.Add(TimeSpan.FromSeconds(1)), End = interval.End, IsActive = true,
+                    });
+                    continue;
+                }
+
+                if (merge.Start <= interval.Start && merge.End > interval.Start)
+                {
+                    // Overlap at the start of the active interval
+                    intervalsToRemove.Add(interval);
+                    intervalsToAdd.Add(new IntervalDto
+                    {
+                        Start = merge.End.Add(TimeSpan.FromSeconds(1)), End = interval.End, IsActive = true,
+                    });
+                    continue;
+                }
+
+                if (merge.Start < interval.End && merge.End >= interval.End)
+                {
+                    // Overlap at the end of the active interval
+                    intervalsToRemove.Add(interval);
+                    intervalsToAdd.Add(new IntervalDto
+                    {
+                        Start = interval.Start, End = merge.Start.Add(TimeSpan.FromSeconds(-1)), IsActive = true,
+                    });
+                }
             }
-            else
+
+            foreach (var interval in intervalsToRemove)
             {
-                yield return current;
-                current = next;
+                intervals.Remove(interval);
             }
+
+            intervals.AddRange(intervalsToAdd);
         }
 
-        yield return current;
+        return intervals.OrderBy(i => i.Start).ToList();
     }
 }

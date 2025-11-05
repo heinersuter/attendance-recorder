@@ -14,7 +14,7 @@ public class PostMergeController(WorkingDayService workingDayService, MergeWrite
         [FromQuery] TimeOnly start,
         [FromQuery] TimeOnly end)
     {
-        writerService.WriteMerge(date, start, end);
+        writerService.WriteActiveMerge(date, start, end);
 
         var workingDay = workingDayService.Build(date);
 

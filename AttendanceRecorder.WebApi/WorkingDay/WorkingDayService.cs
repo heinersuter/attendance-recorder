@@ -14,13 +14,16 @@ public class WorkingDayService(
     public WorkingDayDto Build(DateOnly date)
     {
         var lifeSigns = lifeSignReaderService.GetLifeSigns(date);
-        var merges = mergeReaderService.GetMerges(date);
+        var activeMerges = mergeReaderService.GetActiveMerges(date);
+        var inactiveMerges = mergeReaderService.GetInactiveMerges(date);
 
-        var activeIntervals = _intervalCreator.CreateActiveIntervals(lifeSigns);
+        var intervals = _intervalCreator.CreateActiveIntervals(lifeSigns);
 
-        var mergedIntervals = _intervalsMerger.MergeIntervals(activeIntervals, merges);
+        intervals = _intervalsMerger.MergeActiveIntervals(intervals, activeMerges);
 
-        var intervals = _intervalCreator.CreateInactiveIntervals(mergedIntervals);
+        intervals = _intervalsMerger.MergeInactiveIntervals(intervals, inactiveMerges);
+
+        intervals = _intervalCreator.CreateInactiveIntervals(intervals);
 
         return new WorkingDayDto { Date = date, Intervals = intervals.ToList() };
     }
