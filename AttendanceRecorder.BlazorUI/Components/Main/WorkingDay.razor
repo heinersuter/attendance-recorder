@@ -14,12 +14,10 @@ else
             @foreach (var interval in _workingDay.Intervals)
             {
                 <tr class="@(interval.IsActive ? string.Empty : "text-gray")">
-                    <td>@interval.Start</td>
-                    <td>...</td>
-                    <td>@interval.End</td>
+                    <td>@interval.Start ... @interval.End</td>
                     <td>@interval.Duration</td>
-                    <td>@(interval.IsActive ? "(active)" : "(inactive)")</td>
-                    <td>
+                    <td class="text-center">@(interval.IsActive ? "(active)" : "(inactive)")</td>
+                    <td class="text-end">
                         <button type="button" class="btn" @onclick="() => DeleteInterval(interval)" title="Delete">
                             <span class="bi bi-x-circle"></span>
                         </button>
@@ -52,15 +50,22 @@ else
             _loadedDate = Date;
         }
     }
-    
+
     private async Task DeleteInterval(IntervalDto interval)
     {
         if (interval.IsActive)
         {
-            // Deleting inactive intervals not yet implemented
-            return;
+            // If an active interval is deleted, create an inactive merge to replace it
+            _workingDay = await ApiClient.PostInactiveMergeAsync(
+                Date!.Value.ToDateTime(TimeOnly.MinValue),
+                interval.Start, interval.End);
         }
-
-        _workingDay = await ApiClient.PostMergeAsync(Date!.Value.ToDateTime(TimeOnly.MinValue), interval.Start, interval.End);
+        else
+        {
+            _workingDay = await ApiClient.PostActiveMergeAsync(
+                Date!.Value.ToDateTime(TimeOnly.MinValue),
+                interval.Start, interval.End);
+        }
     }
+
 }

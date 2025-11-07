@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace AttendanceRecorder.WebApi;
 
 [ApiController]
-[Route("api/working-days/{date}/merges")]
-public class PostMergeController(WorkingDayService workingDayService, MergeWriterService writerService) : ControllerBase
+[Route("api/working-days/{date}/merges/active")]
+public class PostActiveMergeController(WorkingDayService workingDayService, MergeWriterService writerService)
+    : ControllerBase
 {
-    [HttpPost(Name = nameof(PostMerge))]
-    public ActionResult<WorkingDayDto> PostMerge(
+    [HttpPost(Name = nameof(PostActiveMerge))]
+    public ActionResult<WorkingDayDto> PostActiveMerge(
         [FromRoute] DateOnly date,
         [FromQuery] TimeOnly start,
         [FromQuery] TimeOnly end)
