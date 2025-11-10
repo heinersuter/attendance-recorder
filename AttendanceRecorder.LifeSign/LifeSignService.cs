@@ -6,14 +6,18 @@ namespace AttendanceRecorder.LifeSign;
 public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWriterService lifeSignWriterService)
     : IAsyncDisposable
 {
-    private readonly CancellationTokenSource _cts = new();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly ManualResetEventSlim _runEvent = new(false);
+    private WindowsSessionSwitchListener? _windowsSessionSwitchListener;
+    private MacSessionSwitchListener? _macSessionSwitchListener;
 
     public async ValueTask DisposeAsync()
     {
-        await _cts.CancelAsync();
-        _cts.Dispose();
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
         _runEvent.Dispose();
+        _windowsSessionSwitchListener?.Dispose();
+        _macSessionSwitchListener?.Dispose();
     }
 
     public async Task StartAsync()
@@ -21,19 +25,32 @@ public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWri
         _runEvent.Set();
         _ = Task.Run(LoopAsync);
         await Task.CompletedTask;
+        if (OperatingSystem.IsWindows())
+        {
+            _windowsSessionSwitchListener = new WindowsSessionSwitchListener(this);
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            _macSessionSwitchListener = new MacSessionSwitchListener(this);
+        }
     }
 
-    public void Stop()
+    public void Pause()
     {
         _runEvent.Reset();
     }
 
+    public void Resume()
+    {
+        _runEvent.Set();
+    }
+
     private async Task LoopAsync()
     {
-        while (!_cts.Token.IsCancellationRequested)
+        while (!_cancellationTokenSource.Token.IsCancellationRequested)
         {
-            _runEvent.Wait(_cts.Token);
-            if (_cts.Token.IsCancellationRequested)
+            _runEvent.Wait(_cancellationTokenSource.Token);
+            if (_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 break;
             }
@@ -42,7 +59,7 @@ public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWri
 
             try
             {
-                await Task.Delay(config.Value.UpdatePeriod, _cts.Token);
+                await Task.Delay(config.Value.UpdatePeriod, _cancellationTokenSource.Token);
             }
             catch (TaskCanceledException)
             {
