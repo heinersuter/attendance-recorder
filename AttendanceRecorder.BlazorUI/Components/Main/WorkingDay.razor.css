@@ -1,3 +1,22 @@
 ﻿.text-gray {
     color: gray;
 }
+
+.bar-container {
+    display: flex;
+    flex-wrap: nowrap;
+    height: 1rem;
+    font-size: 0;
+}
+
+.bar-element {
+    height: 100%;
+}
+
+.bar-element-active {
+    background-color: green;
+}
+
+.bar-element-inactive {
+    background-color: lightgray;
+}

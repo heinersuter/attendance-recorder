@@ -737,6 +737,9 @@ namespace AttendanceRecorder.Client
         [System.Text.Json.Serialization.JsonPropertyName("duration")]
         public string Duration { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("durationPercentage")]
+        public int DurationPercentage { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.6.1.0 (NJsonSchema v11.5.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -750,6 +753,9 @@ namespace AttendanceRecorder.Client
 
         [System.Text.Json.Serialization.JsonPropertyName("intervals")]
         public System.Collections.Generic.ICollection<IntervalDto> Intervals { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("activeDuration")]
+        public string ActiveDuration { get; set; }
 
     }
 

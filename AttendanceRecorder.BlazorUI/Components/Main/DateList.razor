@@ -1,4 +1,5 @@
-﻿@inject ApiClient ApiClient
+﻿@using AttendanceRecorder.BlazorUi.Components.Helpers
+@inject ApiClient ApiClient
 
 <h2>Dates</h2>
 
@@ -48,8 +49,8 @@ else
         if (_loadedYear != Year || _loadedWeek != Week)
         {
             _dates = (await ApiClient.GetDatesAsync(Year.Value, Week.Value))
-                .Select(dt => DateOnly.FromDateTime(dt.Date))
-                .OrderByDescending(d => d);
+                .Select(dateTimeOffset => dateTimeOffset.ToDateOnly())
+                .OrderByDescending(date => date);
             _selectedDate = _dates.FirstOrDefault();
             _loadedYear = Year;
             _loadedWeek = Week;
