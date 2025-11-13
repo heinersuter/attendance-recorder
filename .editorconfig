@@ -26,6 +26,9 @@ indent_style = space
 # This applies to all analyzers (NetAnalyzers, StyleCop, SonarAnalyzer, SecurityCodeScan)
 dotnet_analyzer_diagnostic.severity = warning
 
+# .NET Analyzers
+dotnet_diagnostic.CA1848.severity = none # CA1848: Use the LoggerMessage delegates
+
 # StyleCop.Analyzers
 dotnet_diagnostic.SA0001.severity = none # SA0001: XML Comment Analysis Disabled
 dotnet_diagnostic.SA1010.severity = none # SA1010: Opening square brackets should not be preceded by a space
@@ -39,5 +42,5 @@ dotnet_diagnostic.SA1633.severity = none # SA1633: File must have header documen
 dotnet_diagnostic.VSTHRD111.severity = none # VSTHRD111: Add .ConfigureAwait(bool) to your await expression
 
 [**/**Tests.cs]
-dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
 dotnet_diagnostic.CA1305.severity = none # Specify IFormatProvider
+dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores

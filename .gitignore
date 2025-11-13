@@ -4,3 +4,7 @@ obj/
 /.vs
 /.idea
 /*.DotSettings.user
+
+node_modules/
+/AttendanceRecorder.ConsoleApp/logs
+/AttendanceRecorder.BlazorUi/logs

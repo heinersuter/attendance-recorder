@@ -1,10 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using AttendanceRecorder.BlazorUi.Components;
 using AttendanceRecorder.Client;
 using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
 using AttendanceRecorder.WebApi;
 using AttendanceRecorder.WebApi.WorkingDay;
+using Serilog;
+using Serilog.Formatting.Json;
 
 namespace AttendanceRecorder.BlazorUi;
 
@@ -18,6 +21,15 @@ public sealed class Program
 
     public static async Task Main()
     {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+            .WriteTo.File(
+                new JsonFormatter(),
+                "logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 2)
+            .CreateBootstrapLogger();
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseStaticWebAssets();
 
@@ -27,10 +39,18 @@ public sealed class Program
         builder.Services.AddControllers().AddApplicationPart(typeof(GetYearsController).Assembly);
         builder.Services.AddRazorComponents().AddInteractiveServerComponents();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddSerilog((services, lc) => lc
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext()
+            .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+            .WriteTo.File(
+                new JsonFormatter(),
+                "logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 2));
 
-        builder.Services.AddScoped(_ => new HttpClient());
-        builder.Services.AddScoped<ApiClient>(services =>
-            new ApiClient(builder.WebHost.GetSetting("urls"), services.GetRequiredService<HttpClient>()));
+        builder.Services.AddScoped<ApiClient>(_ =>
+            new ApiClient(builder.WebHost.GetSetting("urls"), new HttpClient()));
 
         var app = builder.Build();
 

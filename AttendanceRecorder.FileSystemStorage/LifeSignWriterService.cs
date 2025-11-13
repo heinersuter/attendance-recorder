@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AttendanceRecorder.FileSystemStorage;
 
-public class LifeSignWriterService(IOptions<FileSystemStorageConfig> config)
+public class LifeSignWriterService(ILogger<LifeSignWriterService> logger, IOptions<FileSystemStorageConfig> config)
 {
     public async Task WriteLifeSignAsync()
     {
@@ -14,5 +15,7 @@ public class LifeSignWriterService(IOptions<FileSystemStorageConfig> config)
         var filePath = Path.Combine(yearDirectory, $"{now:MM-dd}.attrec");
 
         await File.AppendAllTextAsync(filePath, $"{now:HH:mm:ss}{Environment.NewLine}");
+
+        logger.LogInformation("Wrote life sign to {FilePath}", filePath);
     }
 }

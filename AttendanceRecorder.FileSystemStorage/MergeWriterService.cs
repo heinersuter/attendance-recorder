@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AttendanceRecorder.FileSystemStorage;
 
-public class MergeWriterService(IOptions<FileSystemStorageConfig> config)
+public class MergeWriterService(ILogger<MergeWriterService> logger, IOptions<FileSystemStorageConfig> config)
 {
     public void WriteActiveMerge(DateOnly date, TimeOnly start, TimeOnly end)
     {
@@ -22,5 +23,7 @@ public class MergeWriterService(IOptions<FileSystemStorageConfig> config)
         var filePath = Path.Combine(yearDirectory, $"{date:MM-dd}.{(isActive ? "meract" : "merina")}");
 
         File.AppendAllText(filePath, $"{start:HH:mm:ss}-{end:HH:mm:ss}{Environment.NewLine}");
+
+        logger.LogInformation("Wrote {MergeType} merge to {FilePath}", isActive ? "active" : "inactive", filePath);
     }
 }

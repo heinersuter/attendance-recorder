@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.LifeSign;
 using AttendanceRecorder.WebApi;
 using AttendanceRecorder.WebApi.WorkingDay;
+using Serilog;
+using Serilog.Formatting.Json;
 
 namespace AttendanceRecorder.ConsoleApp;
 
@@ -16,6 +19,16 @@ public sealed class Program
 
     public static async Task Main()
     {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+            .WriteTo.File(
+                new JsonFormatter(),
+                "logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 2)
+            .CreateBootstrapLogger();
+
         var builder = WebApplication.CreateBuilder();
 
         builder.Services.AddFileSystemStorage(builder.Configuration);
@@ -23,6 +36,15 @@ public sealed class Program
         builder.Services.AddWorkingDay(builder.Configuration);
         builder.Services.AddControllers().AddApplicationPart(typeof(GetYearsController).Assembly);
         builder.Services.AddSwaggerGen();
+        builder.Services.AddSerilog((services, lc) => lc
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext()
+            .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
+            .WriteTo.File(
+                new JsonFormatter(),
+                "logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 2));
 
         var app = builder.Build();
 

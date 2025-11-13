@@ -1,15 +1,19 @@
 ﻿using AttendanceRecorder.FileSystemStorage;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace AttendanceRecorder.LifeSign;
 
-public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWriterService lifeSignWriterService)
+public sealed class LifeSignService(
+    ILogger<LifeSignService> logger,
+    IOptions<LifeSignConfig> config,
+    LifeSignWriterService lifeSignWriterService)
     : IAsyncDisposable
 {
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly ManualResetEventSlim _runEvent = new(false);
-    private WindowsSessionSwitchListener? _windowsSessionSwitchListener;
     private MacSessionSwitchListener? _macSessionSwitchListener;
+    private WindowsSessionSwitchListener? _windowsSessionSwitchListener;
 
     public async ValueTask DisposeAsync()
     {
@@ -22,6 +26,7 @@ public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWri
 
     public async Task StartAsync()
     {
+        logger.LogInformation("Starting life sign service");
         _runEvent.Set();
         _ = Task.Run(LoopAsync);
         await Task.CompletedTask;
@@ -38,11 +43,13 @@ public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWri
     public void Pause()
     {
         _runEvent.Reset();
+        logger.LogInformation("Life sign service paused");
     }
 
     public void Resume()
     {
         _runEvent.Set();
+        logger.LogInformation("Life sign service resumed");
     }
 
     private async Task LoopAsync()
@@ -64,6 +71,10 @@ public sealed class LifeSignService(IOptions<LifeSignConfig> config, LifeSignWri
             catch (TaskCanceledException)
             {
                 break;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error while writing life sign: {Message}", ex.Message);
             }
         }
     }
