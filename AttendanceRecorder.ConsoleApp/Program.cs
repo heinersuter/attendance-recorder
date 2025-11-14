@@ -31,6 +31,16 @@ public sealed class Program
 
         var builder = WebApplication.CreateBuilder();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.SetIsOriginAllowed(origin => new Uri(origin).Host is "localhost" or "127.0.0.1")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
         builder.Services.AddFileSystemStorage(builder.Configuration);
         builder.Services.AddLifeSign(builder.Configuration);
         builder.Services.AddWorkingDay(builder.Configuration);
@@ -48,11 +58,16 @@ public sealed class Program
 
         var app = builder.Build();
 
+        app.UseCors();
         app.UseRouting();
         app.UseSwagger();
         app.UseSwaggerUI();
 
         app.MapControllers();
+
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        var port = builder.Configuration.GetValue<int>("Server:Port");
+        logger.LogInformation("Swagger UI available at: {SwaggerUrl}", $"http://localhost:{port}/swagger/index.html");
 
         var lifeSignService = app.Services.GetRequiredService<LifeSignService>();
         await lifeSignService.StartAsync();

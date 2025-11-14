@@ -1,33 +1,29 @@
-import { useState } from 'react'
-import viteLogo from '/attendance-recorder.svg'
+import YearList from './year/YearList'
+import logo from '/attendance-recorder.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          title={`Increase the count\nCurrent count: ${count}`}
-        >
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <>
+          <h1><img src={logo} alt="Attendance Recorder logo"/> Attendance Recorder</h1>
+
+          <div className="d-flex gap-4 align-items-start">
+              <div>
+                  <YearList />
+                  {/*<YearList SelectedYearChanged="ChangeYear"/>*/}
+              </div>
+              <div>
+                  {/*<WeekList Year="_selectedYear" SelectedWeekChanged="ChangeWeek"/>*/}
+              </div>
+              <div>
+                  {/*<DateList Year="_selectedYear" Week="_selectedWeek" SelectedDateChanged="ChangeDate"/>*/}
+              </div>
+              <div className="flex-grow-1">
+                  {/*<WorkingDay Date="_selectedDate"></WorkingDay>*/}
+              </div>
+          </div>
+      </>
   )
 }
 
