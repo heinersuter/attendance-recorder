@@ -3,7 +3,7 @@ import { ApiClient } from '../ApiClient.Generated';
 
 function YearList() {
     const [years, setYears] = useState<number[] | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
     useEffect(() => {
         const apiClient = new ApiClient('http://localhost:11515');
@@ -13,19 +13,9 @@ function YearList() {
                 setYears(data);
             })
             .catch((err) => {
-                setError(err.message || 'Failed to load years');
                 console.error('Error loading years:', err);
             });
     }, []);
-
-    if (error) {
-        return (
-            <>
-                <h2>Years</h2>
-                <p>Error: {error}</p>
-            </>
-        );
-    }
 
     if (years === null) {
         return (
@@ -36,12 +26,23 @@ function YearList() {
         );
     }
 
+    const handleYearClick = (year: number) => {
+        setSelectedYear(year);
+    };
+
     return (
         <>
             <h2>Years</h2>
-            <ul>
+            <ul className="flex flex-col gap-2">
                 {years.map((year) => (
-                    <li key={year}>{year}</li>
+                    <li key={year}>
+                        <button 
+                            className={`btn ${year === selectedYear ? 'btn-primary' : 'btn-outline'}`}
+                            onClick={() => handleYearClick(year)}
+                        >
+                            {year}
+                        </button>
+                    </li>
                 ))}
             </ul>
         </>
