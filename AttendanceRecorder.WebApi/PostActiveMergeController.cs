@@ -5,19 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace AttendanceRecorder.WebApi;
 
 [ApiController]
-[Route("api/working-days/{date}/merges/active")]
+[Route("api/working-days/{day}/merges/active")]
 public class PostActiveMergeController(WorkingDayService workingDayService, MergeWriterService writerService)
     : ControllerBase
 {
     [HttpPost(Name = nameof(PostActiveMerge))]
     public ActionResult<WorkingDayDto> PostActiveMerge(
-        [FromRoute] DateOnly date,
+        [FromRoute] DateOnly day,
         [FromQuery] TimeOnly start,
         [FromQuery] TimeOnly end)
     {
-        writerService.WriteActiveMerge(date, start, end);
+        writerService.WriteActiveMerge(day, start, end);
 
-        var workingDay = workingDayService.Build(date);
+        var workingDay = workingDayService.Build(day);
 
         return Ok(workingDay);
     }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ApiClient } from "../ApiClient.Generated";
+import { useApiClient } from "../ApiClientContext";
 
 interface WeekListProps {
   year: number | null;
@@ -9,14 +9,13 @@ interface WeekListProps {
 function WeekList({ year, onWeekSelected }: WeekListProps) {
   const [weeks, setWeeks] = useState<number[] | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const apiClient = useApiClient();
 
   useEffect(() => {
     if (year === null) {
       setWeeks(null);
       return;
     }
-
-    const apiClient = new ApiClient("http://localhost:11515");
 
     apiClient
       .getWeeks(year)
@@ -47,7 +46,7 @@ function WeekList({ year, onWeekSelected }: WeekListProps) {
           {weeks.map((week) => (
             <li key={week}>
               <button
-                className={`btn ${week === selectedWeek ? "btn-primary" : "btn-outline"}`}
+                className={`btn w-full ${week === selectedWeek ? "btn-primary" : "btn-outline"}`}
                 onClick={() => handleClick(week)}
               >
                 {week}

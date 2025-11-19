@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ApiClient } from "../ApiClient.Generated";
+import { useApiClient } from "../ApiClientContext";
 
 interface YearListProps {
   onYearSelected?: (year: number) => void;
@@ -8,15 +8,14 @@ interface YearListProps {
 function YearList({ onYearSelected }: YearListProps) {
   const [years, setYears] = useState<number[] | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const apiClient = useApiClient();
 
   useEffect(() => {
-    const apiClient = new ApiClient("http://localhost:11515");
-
     apiClient
       .getYears()
       .then((data) => {
         setYears(data);
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && selectedYear === null) {
           const firstYear = data[0];
           setSelectedYear(firstYear);
           onYearSelected?.(firstYear);
@@ -25,6 +24,7 @@ function YearList({ onYearSelected }: YearListProps) {
       .catch((err) => {
         console.error("Error loading years:", err);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (years === null) {
@@ -51,7 +51,7 @@ function YearList({ onYearSelected }: YearListProps) {
           {years.map((year) => (
             <li key={year}>
               <button
-                className={`btn ${year === selectedYear ? "btn-primary" : "btn-outline"}`}
+                className={`btn w-full ${year === selectedYear ? "btn-primary" : "btn-outline"}`}
                 onClick={() => handleYearClick(year)}
               >
                 {year}

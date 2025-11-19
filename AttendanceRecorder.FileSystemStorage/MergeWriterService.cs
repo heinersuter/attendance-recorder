@@ -5,22 +5,22 @@ namespace AttendanceRecorder.FileSystemStorage;
 
 public class MergeWriterService(ILogger<MergeWriterService> logger, IOptions<FileSystemStorageConfig> config)
 {
-    public void WriteActiveMerge(DateOnly date, TimeOnly start, TimeOnly end)
+    public void WriteActiveMerge(DateOnly day, TimeOnly start, TimeOnly end)
     {
-        WriteMerge(date, isActive: true, start, end);
+        WriteMerge(day, isActive: true, start, end);
     }
 
-    public void WriteInactiveMerge(DateOnly date, TimeOnly start, TimeOnly end)
+    public void WriteInactiveMerge(DateOnly day, TimeOnly start, TimeOnly end)
     {
-        WriteMerge(date, isActive: false, start, end);
+        WriteMerge(day, isActive: false, start, end);
     }
 
-    private void WriteMerge(DateOnly date, bool isActive, TimeOnly start, TimeOnly end)
+    private void WriteMerge(DateOnly day, bool isActive, TimeOnly start, TimeOnly end)
     {
-        var yearDirectory = Path.Combine(config.Value.Directory, $"{date.Year}");
+        var yearDirectory = Path.Combine(config.Value.Directory, $"{day.Year}");
         Directory.CreateDirectory(yearDirectory);
 
-        var filePath = Path.Combine(yearDirectory, $"{date:MM-dd}.{(isActive ? "meract" : "merina")}");
+        var filePath = Path.Combine(yearDirectory, $"{day:MM-dd}.{(isActive ? "meract" : "merina")}");
 
         File.AppendAllText(filePath, $"{start:HH:mm:ss}-{end:HH:mm:ss}{Environment.NewLine}");
 

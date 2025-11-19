@@ -20,7 +20,7 @@ export class ApiClient {
     /**
      * @return OK
      */
-    getDates(year: number, week: number): Promise<Date[]> {
+    getDays(year: number, week: number): Promise<Date[]> {
         let url_ = this.baseUrl + "/api/years/{year}/weeks/{week}";
         if (year === undefined || year === null)
             throw new globalThis.Error("The parameter 'year' must be defined.");
@@ -38,11 +38,11 @@ export class ApiClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processGetDates(_response);
+            return this.processGetDays(_response);
         });
     }
 
-    protected processGetDates(response: Response): Promise<Date[]> {
+    protected processGetDays(response: Response): Promise<Date[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -203,11 +203,11 @@ export class ApiClient {
      * @param end (optional) 
      * @return OK
      */
-    postActiveMerge(date: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
-        let url_ = this.baseUrl + "/api/working-days/{date}/merges/active?";
-        if (date === undefined || date === null)
-            throw new globalThis.Error("The parameter 'date' must be defined.");
-        url_ = url_.replace("{date}", encodeURIComponent(date ? "" + date.toISOString() : "null"));
+    postActiveMerge(day: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
+        let url_ = this.baseUrl + "/api/working-days/{day}/merges/active?";
+        if (day === undefined || day === null)
+            throw new globalThis.Error("The parameter 'day' must be defined.");
+        url_ = url_.replace("{day}", encodeURIComponent(day ? "" + day.toISOString() : "null"));
         if (start === null)
             throw new globalThis.Error("The parameter 'start' cannot be null.");
         else if (start !== undefined)
@@ -253,11 +253,11 @@ export class ApiClient {
      * @param end (optional) 
      * @return OK
      */
-    postInactiveMerge(date: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
-        let url_ = this.baseUrl + "/api/working-days/{date}/merges/inactive?";
-        if (date === undefined || date === null)
-            throw new globalThis.Error("The parameter 'date' must be defined.");
-        url_ = url_.replace("{date}", encodeURIComponent(date ? "" + date.toISOString() : "null"));
+    postInactiveMerge(day: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
+        let url_ = this.baseUrl + "/api/working-days/{day}/merges/inactive?";
+        if (day === undefined || day === null)
+            throw new globalThis.Error("The parameter 'day' must be defined.");
+        url_ = url_.replace("{day}", encodeURIComponent(day ? "" + day.toISOString() : "null"));
         if (start === null)
             throw new globalThis.Error("The parameter 'start' cannot be null.");
         else if (start !== undefined)
