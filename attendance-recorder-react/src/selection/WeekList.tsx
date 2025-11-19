@@ -24,7 +24,8 @@ function WeekList({ year, onWeekSelected }: WeekListProps) {
         if (data && data.length > 0) {
           const firstWeek = data[0];
           setSelectedWeek(firstWeek);
-          onWeekSelected?.(firstWeek);        }
+          onWeekSelected?.(firstWeek);
+        }
       })
       .catch((err) => {
         console.error("Error loading weeks:", err);

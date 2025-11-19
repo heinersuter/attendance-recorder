@@ -1,7 +1,6 @@
 ﻿@using System.Globalization
 @using AttendanceRecorder.BlazorUi.Components.Helpers
 @inject ApiClient ApiClient
-@inject IJSRuntime JS
 
 <h2>Working Day</h2>
 
@@ -59,7 +58,7 @@ else
 
         if (_loadedDate != Date)
         {
-            _workingDay = await ApiClient.GetWorkingDayAsync(Date.Value.ToDateTime(TimeOnly.MinValue));
+            _workingDay = await ApiClient.GetWorkingDayAsync(Date.Value.ToString("yyyy-MM-dd"));
             _loadedDate = Date;
         }
     }
@@ -70,13 +69,13 @@ else
         {
             // If an active interval is deleted, create an inactive merge to replace it
             _workingDay = await ApiClient.PostInactiveMergeAsync(
-                Date!.Value.ToDateTime(TimeOnly.MinValue),
+                Date!.Value.ToString("yyyy-MM-dd"),
                 interval.Start, interval.End);
         }
         else
         {
             _workingDay = await ApiClient.PostActiveMergeAsync(
-                Date!.Value.ToDateTime(TimeOnly.MinValue),
+                Date!.Value.ToString("yyyy-MM-dd"),
                 interval.Start, interval.End);
         }
     }

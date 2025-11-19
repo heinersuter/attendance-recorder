@@ -117,11 +117,11 @@ export class ApiClient {
     /**
      * @return OK
      */
-    getWorkingDay(date: Date): Promise<WorkingDayDto> {
-        let url_ = this.baseUrl + "/api/working-days/{date}";
-        if (date === undefined || date === null)
-            throw new globalThis.Error("The parameter 'date' must be defined.");
-        url_ = url_.replace("{date}", encodeURIComponent(date ? "" + date.toISOString() : "null"));
+    getWorkingDay(day: string): Promise<WorkingDayDto> {
+        let url_ = this.baseUrl + "/api/working-days/{day}";
+        if (day === undefined || day === null)
+            throw new globalThis.Error("The parameter 'day' must be defined.");
+        url_ = url_.replace("{day}", encodeURIComponent("" + day));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
@@ -203,11 +203,11 @@ export class ApiClient {
      * @param end (optional) 
      * @return OK
      */
-    postActiveMerge(day: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
+    postActiveMerge(day: string, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
         let url_ = this.baseUrl + "/api/working-days/{day}/merges/active?";
         if (day === undefined || day === null)
             throw new globalThis.Error("The parameter 'day' must be defined.");
-        url_ = url_.replace("{day}", encodeURIComponent(day ? "" + day.toISOString() : "null"));
+        url_ = url_.replace("{day}", encodeURIComponent("" + day));
         if (start === null)
             throw new globalThis.Error("The parameter 'start' cannot be null.");
         else if (start !== undefined)
@@ -253,11 +253,11 @@ export class ApiClient {
      * @param end (optional) 
      * @return OK
      */
-    postInactiveMerge(day: Date, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
+    postInactiveMerge(day: string, start: string | undefined, end: string | undefined): Promise<WorkingDayDto> {
         let url_ = this.baseUrl + "/api/working-days/{day}/merges/inactive?";
         if (day === undefined || day === null)
             throw new globalThis.Error("The parameter 'day' must be defined.");
-        url_ = url_.replace("{day}", encodeURIComponent(day ? "" + day.toISOString() : "null"));
+        url_ = url_.replace("{day}", encodeURIComponent("" + day));
         if (start === null)
             throw new globalThis.Error("The parameter 'start' cannot be null.");
         else if (start !== undefined)
@@ -353,7 +353,7 @@ export interface IIntervalDto {
 
 export class WorkingDayDto implements IWorkingDayDto {
     date!: Date;
-    intervals!: IntervalDto[] | undefined;
+    intervals!: IntervalDto[];
     readonly activeDuration?: string;
 
     constructor(data?: IWorkingDayDto) {
@@ -362,6 +362,9 @@ export class WorkingDayDto implements IWorkingDayDto {
                 if (data.hasOwnProperty(property))
                     (this as any)[property] = (data as any)[property];
             }
+        }
+        if (!data) {
+            this.intervals = [];
         }
     }
 
@@ -399,7 +402,7 @@ export class WorkingDayDto implements IWorkingDayDto {
 
 export interface IWorkingDayDto {
     date: Date;
-    intervals: IntervalDto[] | undefined;
+    intervals: IntervalDto[];
     activeDuration?: string;
 }
 

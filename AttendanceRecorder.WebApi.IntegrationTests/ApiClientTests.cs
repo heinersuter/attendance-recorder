@@ -38,8 +38,7 @@ public class ApiClientTests
             ClassName = "ApiClient",
             CSharpGeneratorSettings =
             {
-                Namespace = "AttendanceRecorder.Client",
-                JsonLibrary = CSharpJsonLibrary.SystemTextJson,
+                Namespace = "AttendanceRecorder.Client", JsonLibrary = CSharpJsonLibrary.SystemTextJson,
             },
         };
         var generator = new CSharpClientGenerator(document, settings);
@@ -61,7 +60,7 @@ public class ApiClientTests
         var document = await OpenApiDocument.FromJsonAsync(swaggerJson);
         var settings = new TypeScriptClientGeneratorSettings
         {
-            ClassName = "ApiClient",
+            ClassName = "ApiClient", GenerateOptionalParameters = false,
         };
         var generator = new TypeScriptClientGenerator(document, settings);
         var code = generator.GenerateFile();

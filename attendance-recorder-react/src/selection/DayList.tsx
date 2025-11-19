@@ -8,7 +8,7 @@ interface DayListProps {
 }
 
 function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('de-CH').format(date);
+  return new Intl.DateTimeFormat("de-CH").format(date);
 }
 
 function DayList({ year, week, onDaySelected }: DayListProps) {
@@ -22,7 +22,6 @@ function DayList({ year, week, onDaySelected }: DayListProps) {
       return;
     }
 
-
     apiClient
       .getDays(year, week)
       .then((data) => {
@@ -30,7 +29,8 @@ function DayList({ year, week, onDaySelected }: DayListProps) {
         if (data && data.length > 0) {
           const firstDay = data[0];
           setSelectedDay(firstDay);
-          onDaySelected?.(firstDay);        }
+          onDaySelected?.(firstDay);
+        }
       })
       .catch((err) => {
         console.error("Error loading days:", err);

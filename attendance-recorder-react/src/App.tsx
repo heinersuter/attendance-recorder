@@ -6,6 +6,7 @@ import { ApiClient } from "./ApiClient.Generated";
 import { ApiClientProvider } from "./ApiClientContext";
 import logo from "/attendance-recorder.svg";
 import "./App.css";
+import WorkingDay from "./working-day/WorkingDay";
 
 function App() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -41,7 +42,7 @@ function App() {
           <DayList year={selectedYear} week={selectedWeek} onDaySelected={handleDaySelected} />
         </div>
         <div className="flex-grow-1">
-          {/*<WorkingDay Date="_selectedDate"></WorkingDay>*/}
+          <WorkingDay day={selectedDay}></WorkingDay>
         </div>
       </div>
     </ApiClientProvider>
