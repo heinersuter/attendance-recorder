@@ -56,6 +56,12 @@ public sealed class Program
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 2));
 
+        var port = builder.Configuration.GetValue<int>("Server:Port");
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(port);
+        });
+
         var app = builder.Build();
 
         app.UseDefaultFiles();
@@ -68,7 +74,6 @@ public sealed class Program
         app.MapControllers();
 
         var logger = app.Services.GetRequiredService<ILogger<Program>>();
-        var port = builder.Configuration.GetValue<int>("Server:Port");
         logger.LogInformation("Swagger UI available at: {SwaggerUrl}", $"http://localhost:{port}/swagger/index.html");
 
         var lifeSignService = app.Services.GetRequiredService<LifeSignService>();

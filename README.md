@@ -11,7 +11,26 @@ All LifeSigns within the same minute are combined to an active interval.
 A user can override the intervals by defining additional active intervals.
 Or inactive intervals.
 
+## Build the app
+
+### Prerequisites
+
+* .Net SDK as defined in [Directory.Build.props](Directory.Build.props)
+* Nude.js in a current version
+
+## Run the app
+
+1. Configure the file location in `appsettings.json` of ConsoleApp.
+2. Build the client with `npm run build` (output is `wwwroot` of ConsoleApp).
+3. Publish project ConsoleApp.
+4. Run the ConsoleApp from publish folder (shell script can be used).
+
 ## Application Parts
+
+### ConsoleApp
+
+Main entry point of the application.
+Hosts the static web pages and the WebApi.
 
 ### LifeSign
 
@@ -27,7 +46,6 @@ And to store overrides (merges).
 
 Reading and writing files.
 
-### BlazorUi
+### attendance-recorder-react
 
-Frontend to display attendance information.  
-Main starting point of the application.
+Frontend to display attendance information.
