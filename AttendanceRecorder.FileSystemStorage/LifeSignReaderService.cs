@@ -15,23 +15,23 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
 
     public IEnumerable<int> GetWeeksByYear(int year)
     {
-        return GetDatesByYear(year)
+        return GetDaysByYear(year)
             .Select(GetWeekOfYear)
             .Distinct();
     }
 
-    public IEnumerable<DateOnly> GetDatesByWeek(int year, int week)
+    public IEnumerable<DateOnly> GetDaysByWeek(int year, int week)
     {
-        return GetDatesByYear(year)
-            .Where(date => GetWeekOfYear(date) == week);
+        return GetDaysByYear(year)
+            .Where(day => GetWeekOfYear(day) == week);
     }
 
-    public IEnumerable<TimeOnly> GetLifeSigns(DateOnly date)
+    public IEnumerable<TimeOnly> GetLifeSigns(DateOnly day)
     {
         var filePath = Path.Combine(
             config.Value.Directory,
-            date.Year.ToString(CultureInfo.InvariantCulture),
-            $"{date.Month:D2}-{date.Day:D2}.attrec");
+            day.Year.ToString(CultureInfo.InvariantCulture),
+            $"{day.Month:D2}-{day.Day:D2}.attrec");
 
         if (!File.Exists(filePath))
         {
@@ -43,7 +43,7 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
             .Select(line => TimeOnly.ParseExact(line, "HH:mm:ss", CultureInfo.InvariantCulture));
     }
 
-    private IEnumerable<DateOnly> GetDatesByYear(int year)
+    private IEnumerable<DateOnly> GetDaysByYear(int year)
     {
         var yearDirectory = Path.Combine(config.Value.Directory, year.ToString(CultureInfo.InvariantCulture));
         if (!Directory.Exists(yearDirectory))
@@ -56,11 +56,11 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
             .Select(filePath => ToDateOnly(year, filePath));
     }
 
-    private static int GetWeekOfYear(DateOnly date)
+    private static int GetWeekOfYear(DateOnly day)
     {
         var calendar = CultureInfo.GetCultureInfo("de-CH").Calendar;
         return calendar.GetWeekOfYear(
-            date.ToDateTime(TimeOnly.MinValue),
+            day.ToDateTime(TimeOnly.MinValue),
             CalendarWeekRule.FirstFourDayWeek,
             DayOfWeek.Monday);
     }

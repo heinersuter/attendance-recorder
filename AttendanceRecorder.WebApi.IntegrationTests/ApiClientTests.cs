@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using NJsonSchema.CodeGeneration.CSharp;
 using NSwag;
-using NSwag.CodeGeneration.CSharp;
+using NSwag.CodeGeneration.TypeScript;
 using Shouldly;
 
 namespace AttendanceRecorder.WebApi.IntegrationTests;
@@ -26,25 +25,20 @@ public class ApiClientTests
     }
 
     [Test]
-    public async Task ApiClient_NewlyGenerated_MatchesExistingFileAsync()
+    public async Task TypeScriptApiClient_NewlyGenerated_MatchesExistingFileAsync()
     {
         var response = await _client.GetAsync("/swagger/v1/swagger.json");
         response.EnsureSuccessStatusCode();
         var swaggerJson = await response.Content.ReadAsStringAsync();
         var document = await OpenApiDocument.FromJsonAsync(swaggerJson);
-        var settings = new CSharpClientGeneratorSettings
+        var settings = new TypeScriptClientGeneratorSettings
         {
-            ClassName = "ApiClient",
-            CSharpGeneratorSettings =
-            {
-                Namespace = "AttendanceRecorder.Client",
-                JsonLibrary = CSharpJsonLibrary.SystemTextJson,
-            },
+            ClassName = "ApiClient", GenerateOptionalParameters = false,
         };
-        var generator = new CSharpClientGenerator(document, settings);
+        var generator = new TypeScriptClientGenerator(document, settings);
         var code = generator.GenerateFile();
 
-        const string generatedClientFile = "../../../../AttendanceRecorder.BlazorUi/ApiClient.Generated.cs";
+        const string generatedClientFile = "../../../../attendance-recorder-react/src/ApiClient.Generated.ts";
         var existingCode = await File.ReadAllTextAsync(generatedClientFile);
         await File.WriteAllTextAsync(generatedClientFile, code);
 

@@ -1,23 +1,26 @@
-﻿using AttendanceRecorder.FileSystemStorage;
+﻿using System.Globalization;
+using AttendanceRecorder.FileSystemStorage;
 using AttendanceRecorder.WebApi.WorkingDay;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AttendanceRecorder.WebApi;
 
 [ApiController]
-[Route("api/working-days/{date}/merges/inactive")]
+[Route("api/working-days/{day}/merges/inactive")]
 public class PostInactiveMergeController(WorkingDayService workingDayService, MergeWriterService writerService)
     : ControllerBase
 {
     [HttpPost(Name = nameof(PostInactiveMerge))]
     public ActionResult<WorkingDayDto> PostInactiveMerge(
-        [FromRoute] DateOnly date,
+        [FromRoute] string day, // DateOnly cannot be generated with NSwag in the typescript client
         [FromQuery] TimeOnly start,
         [FromQuery] TimeOnly end)
     {
-        writerService.WriteInactiveMerge(date, start, end);
+        var parsedDay = DateOnly.Parse(day, CultureInfo.InvariantCulture);
 
-        var workingDay = workingDayService.Build(date);
+        writerService.WriteInactiveMerge(parsedDay, start, end);
+
+        var workingDay = workingDayService.Build(parsedDay);
 
         return Ok(workingDay);
     }

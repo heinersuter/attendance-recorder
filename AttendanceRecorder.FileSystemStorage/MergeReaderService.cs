@@ -5,22 +5,22 @@ namespace AttendanceRecorder.FileSystemStorage;
 
 public class MergeReaderService(IOptions<FileSystemStorageConfig> config)
 {
-    public IEnumerable<(TimeOnly Start, TimeOnly End)> GetActiveMerges(DateOnly date)
+    public IEnumerable<(TimeOnly Start, TimeOnly End)> GetActiveMerges(DateOnly day)
     {
-        return GetMerges(date, isActive: true);
+        return GetMerges(day, isActive: true);
     }
 
-    public IEnumerable<(TimeOnly Start, TimeOnly End)> GetInactiveMerges(DateOnly date)
+    public IEnumerable<(TimeOnly Start, TimeOnly End)> GetInactiveMerges(DateOnly day)
     {
-        return GetMerges(date, isActive: false);
+        return GetMerges(day, isActive: false);
     }
 
-    private IEnumerable<(TimeOnly Start, TimeOnly End)> GetMerges(DateOnly date, bool isActive)
+    private IEnumerable<(TimeOnly Start, TimeOnly End)> GetMerges(DateOnly day, bool isActive)
     {
         var filePath = Path.Combine(
             config.Value.Directory,
-            date.Year.ToString(CultureInfo.InvariantCulture),
-            $"{date:MM-dd}.{(isActive ? "meract" : "merina")}");
+            day.Year.ToString(CultureInfo.InvariantCulture),
+            $"{day:MM-dd}.{(isActive ? "meract" : "merina")}");
 
         if (!File.Exists(filePath))
         {
