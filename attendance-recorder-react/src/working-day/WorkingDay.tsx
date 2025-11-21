@@ -75,7 +75,9 @@ function WorkingDay({ day }: WorkingDayProps) {
             <tbody>
               {workingDay.intervals.map((interval) => (
                 <tr
-                  className={interval.isActive ? "" : "text-gray-500"}
+                  className={
+                    interval.isActive ? "text-base-content" : "text-gray-500"
+                  }
                   key={interval.start}
                 >
                   <td>
@@ -92,10 +94,15 @@ function WorkingDay({ day }: WorkingDayProps) {
                       onClick={() => handleClick(interval)}
                       title="Delete"
                     >
-                      <IconClockMinus
-                        size={20}
-                        color={interval.isActive ? "white" : "#6b7280"}
-                      />
+                      <span
+                        className={
+                          interval.isActive
+                            ? "text-base-content"
+                            : "text-gray-500"
+                        }
+                      >
+                        <IconClockMinus size={20} stroke="2" />
+                      </span>
                     </button>
                   </td>
                 </tr>
