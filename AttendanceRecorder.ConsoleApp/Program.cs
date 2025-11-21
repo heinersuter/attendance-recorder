@@ -58,6 +58,8 @@ public sealed class Program
 
         var app = builder.Build();
 
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
         app.UseCors();
         app.UseRouting();
         app.UseSwagger();

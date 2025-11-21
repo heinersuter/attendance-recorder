@@ -8,3 +8,4 @@ obj/
 node_modules/
 /AttendanceRecorder.ConsoleApp/logs
 /AttendanceRecorder.BlazorUi/logs
+/AttendanceRecorder.ConsoleApp/wwwroot

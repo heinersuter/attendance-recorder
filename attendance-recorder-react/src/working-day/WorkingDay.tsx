@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { IntervalDto, WorkingDayDto } from "../ApiClient.Generated";
 import {
+  formatDate,
   getInvariantDateString,
   getWeekdayName,
 } from "../common/date-functions";
@@ -66,7 +67,10 @@ function WorkingDay({ day }: WorkingDayProps) {
         <p>Loading working day...</p>
       ) : (
         <>
-          <h2>{getWeekdayName(day)}</h2>
+          <h2>
+            {getWeekdayName(day)} | {formatDate(day)} | Day total:{" "}
+            {workingDay.activeDuration}
+          </h2>
           <table className="w-full">
             <tbody>
               {workingDay.intervals.map((interval) => (

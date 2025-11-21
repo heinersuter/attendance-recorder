@@ -303,8 +303,8 @@ export class IntervalDto implements IIntervalDto {
     isActive!: boolean;
     start!: string;
     end!: string;
-    readonly duration?: string;
-    readonly durationPercentage?: number;
+    readonly duration!: string;
+    readonly durationPercentage!: number;
 
     constructor(data?: IIntervalDto) {
         if (data) {
@@ -347,14 +347,14 @@ export interface IIntervalDto {
     isActive: boolean;
     start: string;
     end: string;
-    duration?: string;
-    durationPercentage?: number;
+    duration: string;
+    durationPercentage: number;
 }
 
 export class WorkingDayDto implements IWorkingDayDto {
     date!: Date;
     intervals!: IntervalDto[];
-    readonly activeDuration?: string;
+    readonly activeDuration!: string;
 
     constructor(data?: IWorkingDayDto) {
         if (data) {
@@ -403,7 +403,7 @@ export class WorkingDayDto implements IWorkingDayDto {
 export interface IWorkingDayDto {
     date: Date;
     intervals: IntervalDto[];
-    activeDuration?: string;
+    activeDuration: string;
 }
 
 function formatDate(d: Date) {

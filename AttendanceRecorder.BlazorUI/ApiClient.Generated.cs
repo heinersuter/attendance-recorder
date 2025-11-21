@@ -735,6 +735,7 @@ namespace AttendanceRecorder.Client
         public System.TimeSpan End { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("duration")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Duration { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("durationPercentage")]
@@ -756,6 +757,7 @@ namespace AttendanceRecorder.Client
         public System.Collections.Generic.ICollection<IntervalDto> Intervals { get; set; } = new System.Collections.ObjectModel.Collection<IntervalDto>();
 
         [System.Text.Json.Serialization.JsonPropertyName("activeDuration")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string ActiveDuration { get; set; }
 
     }

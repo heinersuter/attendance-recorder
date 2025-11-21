@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { useApiClient } from "../ApiClientContext";
-
+import { formatDate } from "../common/date-functions";
 interface DayListProps {
   year: number | null;
   week: number | null;
   onDaySelected?: (day: Date) => void;
-}
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("de-CH").format(date);
 }
 
 function DayList({ year, week, onDaySelected }: DayListProps) {

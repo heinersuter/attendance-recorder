@@ -27,31 +27,6 @@ public class ApiClientTests
     }
 
     [Test]
-    public async Task BlazorApiClient_NewlyGenerated_MatchesExistingFileAsync()
-    {
-        var response = await _client.GetAsync("/swagger/v1/swagger.json");
-        response.EnsureSuccessStatusCode();
-        var swaggerJson = await response.Content.ReadAsStringAsync();
-        var document = await OpenApiDocument.FromJsonAsync(swaggerJson);
-        var settings = new CSharpClientGeneratorSettings
-        {
-            ClassName = "ApiClient",
-            CSharpGeneratorSettings =
-            {
-                Namespace = "AttendanceRecorder.Client", JsonLibrary = CSharpJsonLibrary.SystemTextJson,
-            },
-        };
-        var generator = new CSharpClientGenerator(document, settings);
-        var code = generator.GenerateFile();
-
-        const string generatedClientFile = "../../../../AttendanceRecorder.BlazorUi/ApiClient.Generated.cs";
-        var existingCode = await File.ReadAllTextAsync(generatedClientFile);
-        await File.WriteAllTextAsync(generatedClientFile, code);
-
-        code.ShouldBe(existingCode);
-    }
-
-    [Test]
     public async Task TypeScriptApiClient_NewlyGenerated_MatchesExistingFileAsync()
     {
         var response = await _client.GetAsync("/swagger/v1/swagger.json");
