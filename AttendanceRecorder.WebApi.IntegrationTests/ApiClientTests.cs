@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using NJsonSchema.CodeGeneration.CSharp;
 using NSwag;
-using NSwag.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.TypeScript;
 using Shouldly;
 
