@@ -16,14 +16,44 @@ Or inactive intervals.
 ### Prerequisites
 
 * .Net SDK as defined in [Directory.Build.props](Directory.Build.props)
-* Nude.js in a current version
+* Node.js in a current version
 
-## Run the app
+## Build and run the app
 
 1. Configure the file location in `appsettings.json` of ConsoleApp.
 2. Build the client with `npm run build` (output is `wwwroot` of ConsoleApp).
 3. Publish project ConsoleApp.
-4. Run the ConsoleApp from publish folder (shell script can be used).
+4. Run the ConsoleApp from publish folder.
+
+### Start on login on Mac
+
+To start the application on login, create a file `com.attendance.recorder.plist` in `~/Library/LaunchAgents/` with the following content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>com.attendance.recorder</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>/usr/local/share/dotnet/dotnet</string>
+            <string>AttendanceRecorder.ConsoleApp.dll</string>
+        </array>
+        <key>WorkingDirectory</key>
+        <string>{Path to publish directory}/bin/Release/net9.0/publish</string>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+        <true/>
+        <key>StandardErrorPath</key>
+        <string>/tmp/com.attendance.recorder.err</string>
+    </dict>
+</plist>
+```
+
+To check the location of the dotnet command, use `which dotnet`.
 
 ## Application Parts
 
