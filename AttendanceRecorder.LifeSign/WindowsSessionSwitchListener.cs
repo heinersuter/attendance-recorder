@@ -2,18 +2,21 @@
 
 namespace AttendanceRecorder.LifeSign;
 
-public sealed class WindowsSessionSwitchListener : IDisposable
+public sealed class WindowsSessionSwitchListener : ISessionSwitchListener, IDisposable
 {
-    private readonly LifeSignService _lifeSignService;
+    private bool _isLocked;
 
-    public WindowsSessionSwitchListener(LifeSignService lifeSignService)
+    public WindowsSessionSwitchListener()
     {
-        _lifeSignService = lifeSignService;
-
         if (OperatingSystem.IsWindows())
         {
             SystemEvents.SessionSwitch += OnSessionSwitch;
         }
+    }
+
+    public bool IsLocked()
+    {
+        return _isLocked;
     }
 
     public void Dispose()
@@ -33,11 +36,11 @@ public sealed class WindowsSessionSwitchListener : IDisposable
 
         if (e.Reason == SessionSwitchReason.SessionLock)
         {
-            _lifeSignService.Pause();
+            _isLocked = true;
         }
         else if (e.Reason == SessionSwitchReason.SessionUnlock)
         {
-            _lifeSignService.Resume();
+            _isLocked = false;
         }
     }
 }

@@ -2,25 +2,12 @@
 
 namespace AttendanceRecorder.LifeSign;
 
-public sealed class MacSessionSwitchListener : IDisposable
+public sealed class MacSessionSwitchListener : ISessionSwitchListener
 {
     private const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
     private const string CoreGraphicsLib = "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics";
-    private readonly LifeSignService _lifeSignService;
 
-    private bool? _wasLocked;
-
-    public MacSessionSwitchListener(LifeSignService lifeSignService)
-    {
-        _lifeSignService = lifeSignService;
-        _ = new Timer(CheckScreenLockState, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
-    }
-
-    public void Dispose()
-    {
-    }
-
-    private void CheckScreenLockState(object? state)
+    public bool IsLocked()
     {
         var sessionInfo = CGSessionCopyCurrentDictionary();
 
@@ -38,19 +25,7 @@ public sealed class MacSessionSwitchListener : IDisposable
 
             CFRelease(screenLockedKey);
 
-            if (!_wasLocked.HasValue || screenIsLocked != _wasLocked.Value)
-            {
-                if (screenIsLocked)
-                {
-                    _lifeSignService.Pause();
-                }
-                else
-                {
-                    _lifeSignService.Resume();
-                }
-            }
-
-            _wasLocked = screenIsLocked;
+            return screenIsLocked;
         }
         finally
         {

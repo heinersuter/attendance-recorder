@@ -12,7 +12,7 @@ public sealed class LifeSignService(
 {
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly ManualResetEventSlim _runEvent = new(false);
-    private MacSessionSwitchListener? _macSessionSwitchListener;
+    private ISessionSwitchListener? _sessionSwitchListener;
     private WindowsSessionSwitchListener? _windowsSessionSwitchListener;
 
     public async ValueTask DisposeAsync()
@@ -21,7 +21,6 @@ public sealed class LifeSignService(
         _cancellationTokenSource.Dispose();
         _runEvent.Dispose();
         _windowsSessionSwitchListener?.Dispose();
-        _macSessionSwitchListener?.Dispose();
     }
 
     public async Task StartAsync()
@@ -33,12 +32,13 @@ public sealed class LifeSignService(
         if (OperatingSystem.IsWindows())
         {
             logger.LogInformation("Attaching WindowsSessionSwitchListener");
-            _windowsSessionSwitchListener = new WindowsSessionSwitchListener(this);
+            _windowsSessionSwitchListener = new WindowsSessionSwitchListener();
+            _sessionSwitchListener = _windowsSessionSwitchListener;
         }
         else if (OperatingSystem.IsMacOS())
         {
             logger.LogInformation("Attaching MacSessionSwitchListener");
-            _macSessionSwitchListener = new MacSessionSwitchListener(this);
+            _sessionSwitchListener = new MacSessionSwitchListener();
         }
     }
 
@@ -66,7 +66,14 @@ public sealed class LifeSignService(
 
             try
             {
-                await lifeSignWriterService.WriteLifeSignAsync();
+                if (_sessionSwitchListener == null || !_sessionSwitchListener.IsLocked())
+                {
+                    await lifeSignWriterService.WriteLifeSignAsync();
+                }
+                else
+                {
+                    logger.LogInformation("Session is locked, no life sign is written");
+                }
             }
             catch (Exception ex)
             {
