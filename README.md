@@ -53,6 +53,9 @@ To start the application on login, create a file `com.attendance.recorder.plist`
 </plist>
 ```
 
+Start service: `launchctl load ~/Library/LaunchAgents/com.attendance.recorder.plist`  
+Stop service: `launchctl unload ~/Library/LaunchAgents/com.attendance.recorder.plist`
+
 To check the location of the dotnet command, use `which dotnet`.
 
 ## Application Parts

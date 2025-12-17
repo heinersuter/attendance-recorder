@@ -5,12 +5,18 @@ namespace AttendanceRecorder.FileSystemStorage;
 
 public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
 {
+    private readonly Lock _readLock = new();
+
     public IEnumerable<int> GetYears()
     {
-        return Directory
-            .GetDirectories(config.Value.Directory)
-            .Select(Path.GetFileName)
-            .Select(int.Parse!);
+        lock (_readLock)
+        {
+            return Directory
+                .EnumerateDirectories(config.Value.Directory)
+                .Select(Path.GetFileName)
+                .Select(int.Parse!)
+                .ToList();
+        }
     }
 
     public IEnumerable<int> GetWeeksByYear(int year)
@@ -33,27 +39,35 @@ public class LifeSignReaderService(IOptions<FileSystemStorageConfig> config)
             day.Year.ToString(CultureInfo.InvariantCulture),
             $"{day.Month:D2}-{day.Day:D2}.attrec");
 
-        if (!File.Exists(filePath))
+        lock (_readLock)
         {
-            return [];
-        }
+            if (!File.Exists(filePath))
+            {
+                return [];
+            }
 
-        return File
-            .ReadAllLines(filePath)
-            .Select(line => TimeOnly.ParseExact(line, "HH:mm:ss", CultureInfo.InvariantCulture));
+            return File
+                .ReadAllLines(filePath)
+                .Select(line => TimeOnly.ParseExact(line, "HH:mm:ss", CultureInfo.InvariantCulture))
+                .ToList();
+        }
     }
 
-    private IEnumerable<DateOnly> GetDaysByYear(int year)
+    private List<DateOnly> GetDaysByYear(int year)
     {
         var yearDirectory = Path.Combine(config.Value.Directory, year.ToString(CultureInfo.InvariantCulture));
-        if (!Directory.Exists(yearDirectory))
+        lock (_readLock)
         {
-            return [];
-        }
+            if (!Directory.Exists(yearDirectory))
+            {
+                return [];
+            }
 
-        return Directory
-            .GetFiles(yearDirectory, "*.attrec")
-            .Select(filePath => ToDateOnly(year, filePath));
+            return Directory
+                .EnumerateFiles(yearDirectory, "*.attrec")
+                .Select(filePath => ToDateOnly(year, filePath))
+                .ToList();
+        }
     }
 
     private static int GetWeekOfYear(DateOnly day)

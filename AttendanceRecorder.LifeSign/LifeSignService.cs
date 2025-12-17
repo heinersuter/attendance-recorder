@@ -32,10 +32,12 @@ public sealed class LifeSignService(
         await Task.CompletedTask;
         if (OperatingSystem.IsWindows())
         {
+            logger.LogInformation("Attaching WindowsSessionSwitchListener");
             _windowsSessionSwitchListener = new WindowsSessionSwitchListener(this);
         }
         else if (OperatingSystem.IsMacOS())
         {
+            logger.LogInformation("Attaching MacSessionSwitchListener");
             _macSessionSwitchListener = new MacSessionSwitchListener(this);
         }
     }
@@ -62,7 +64,14 @@ public sealed class LifeSignService(
                 break;
             }
 
-            await lifeSignWriterService.WriteLifeSignAsync();
+            try
+            {
+                await lifeSignWriterService.WriteLifeSignAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error while writing life sign: {Message}", ex.Message);
+            }
 
             try
             {
@@ -71,10 +80,6 @@ public sealed class LifeSignService(
             catch (TaskCanceledException)
             {
                 break;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error while writing life sign: {Message}", ex.Message);
             }
         }
     }

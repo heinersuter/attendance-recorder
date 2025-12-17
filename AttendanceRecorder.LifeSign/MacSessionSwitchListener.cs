@@ -1,134 +1,81 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text;
 
 namespace AttendanceRecorder.LifeSign;
 
 public sealed class MacSessionSwitchListener : IDisposable
 {
     private const string CoreFoundationLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
-    private const uint KCfStringEncodingUtf8 = 0x08000100;
+    private const string CoreGraphicsLib = "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics";
+    private readonly LifeSignService _lifeSignService;
+
+    private bool? _wasLocked;
 
     public MacSessionSwitchListener(LifeSignService lifeSignService)
     {
-        var center = CFNotificationCenterGetDistributedCenter();
-
-        // Callback invoked for both notifications
-        CFNotificationCallback cb = (_, _, namePtr, _, _) =>
-        {
-            var name = CfStringToDotNetString(namePtr);
-            var when = DateTimeOffset.Now.ToString("u");
-
-            if (name == "com.apple.screenIsLocked")
-            {
-                Console.WriteLine($"[{when}] Screen LOCKED");
-                lifeSignService.Pause();
-            }
-            else if (name == "com.apple.screenIsUnlocked")
-            {
-                Console.WriteLine($"[{when}] Screen UNLOCKED");
-                lifeSignService.Resume();
-            }
-            else
-            {
-                Console.WriteLine($"[{when}] Other notification: {name}");
-            }
-        };
-
-        // Subscribe to com.apple.screenIsLocked
-        Subscribe(center, "com.apple.screenIsLocked", cb);
-
-        // Subscribe to com.apple.screenIsUnlocked
-        Subscribe(center, "com.apple.screenIsUnlocked", cb);
+        _lifeSignService = lifeSignService;
+        _ = new Timer(CheckScreenLockState, null, TimeSpan.Zero, TimeSpan.FromSeconds(2));
     }
 
     public void Dispose()
     {
     }
 
-    private static string CfStringToDotNetString(IntPtr cfString)
+    private void CheckScreenLockState(object? state)
     {
-        if (cfString == IntPtr.Zero)
+        var sessionInfo = CGSessionCopyCurrentDictionary();
+
+        if (sessionInfo == IntPtr.Zero)
         {
-            return string.Empty;
+            throw new InvalidOperationException("Failed to get session info");
         }
 
-        var sb = new StringBuilder(256);
-        if (CFStringGetCString(cfString, sb, sb.Capacity, KCfStringEncodingUtf8))
+        try
         {
-            return sb.ToString();
-        }
+            var screenLockedKey = CFStringCreateWithCString(IntPtr.Zero, "CGSSessionScreenIsLocked", 0x08000100);
+            var screenLockedValue = CFDictionaryGetValue(sessionInfo, screenLockedKey);
 
-        // Fallback if the string was longer than 256
-        var big = new StringBuilder(4096);
-        if (CFStringGetCString(cfString, big, big.Capacity, KCfStringEncodingUtf8))
+            var screenIsLocked = screenLockedValue != IntPtr.Zero && CFBooleanGetValue(screenLockedValue);
+
+            CFRelease(screenLockedKey);
+
+            if (!_wasLocked.HasValue || screenIsLocked != _wasLocked.Value)
+            {
+                if (screenIsLocked)
+                {
+                    _lifeSignService.Pause();
+                }
+                else
+                {
+                    _lifeSignService.Resume();
+                }
+            }
+
+            _wasLocked = screenIsLocked;
+        }
+        finally
         {
-            return big.ToString();
+            CFRelease(sessionInfo);
         }
-
-        return string.Empty;
     }
 
-    [DllImport(CoreFoundationLib)]
+#pragma warning disable CA2101
 #pragma warning disable SYSLIB1054
-#pragma warning disable SA1201
-#pragma warning disable CA1838
-    // ReSharper disable InconsistentNaming
-    // ReSharper disable UnusedMember.Local
-    private static extern IntPtr CFNotificationCenterGetDistributedCenter();
+
+    [DllImport(CoreGraphicsLib)]
+    private static extern IntPtr CGSessionCopyCurrentDictionary();
 
     [DllImport(CoreFoundationLib)]
-    private static extern void CFNotificationCenterAddObserver(
-        IntPtr center,
-        IntPtr observer,
-        CFNotificationCallback callback,
-        IntPtr name, // CFStringRef (nullable)
-        IntPtr obj, // CFTypeRef (nullable)
-        CFNotificationSuspensionBehavior suspensionBehavior);
-
-    [DllImport(CoreFoundationLib, CharSet = CharSet.Unicode)]
-    private static extern IntPtr CFStringCreateWithCString(
-        IntPtr alloc, string str, uint encoding);
-
-    [DllImport(CoreFoundationLib, CharSet = CharSet.Unicode)]
-    private static extern bool CFStringGetCString(
-        IntPtr theString, StringBuilder buffer, nint bufferSize, uint encoding);
+    private static extern IntPtr CFStringCreateWithCString(IntPtr alloc, string str, uint encoding);
 
     [DllImport(CoreFoundationLib)]
     private static extern void CFRelease(IntPtr cfTypeRef);
 
-    private static void Subscribe(IntPtr center, string notificationName, CFNotificationCallback cb)
-    {
-        var nameRef = CFStringCreateWithCString(IntPtr.Zero, notificationName, KCfStringEncodingUtf8);
-        try
-        {
-            CFNotificationCenterAddObserver(
-                center,
-                IntPtr.Zero,
-                cb,
-                nameRef,
-                IntPtr.Zero,
-                CFNotificationSuspensionBehavior.DeliverImmediately);
-        }
-        finally
-        {
-            CFRelease(nameRef);
-        }
-    }
+    [DllImport(CoreFoundationLib)]
+    private static extern IntPtr CFDictionaryGetValue(IntPtr theDict, IntPtr key);
 
-    private enum CFNotificationSuspensionBehavior : uint
-    {
-        Drop = 1,
-        Coalesce = 2,
-        Hold = 3,
-        DeliverImmediately = 4,
-    }
+    [DllImport(CoreFoundationLib)]
+    private static extern bool CFBooleanGetValue(IntPtr boolean);
 
-    private delegate void CFNotificationCallback(
-        IntPtr center, IntPtr observer, IntPtr name, IntPtr obj, IntPtr userInfo);
-
-    // ReSharper restore UnusedMember.Local
-    // ReSharper restore InconsistentNaming
-#pragma warning restore CA1838
-#pragma warning restore SA1201
+#pragma warning restore CA2101
 #pragma warning restore SYSLIB1054
 }

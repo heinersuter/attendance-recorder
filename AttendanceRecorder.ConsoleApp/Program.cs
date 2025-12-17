@@ -23,10 +23,20 @@ public sealed class Program
             .Enrich.FromLogContext()
             .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
             .WriteTo.File(
-                new JsonFormatter(),
-                "logs/log.txt",
+                formatter: new JsonFormatter(),
+                path: "logs/log.txt",
                 rollingInterval: RollingInterval.Day,
                 retainedFileCountLimit: 2)
+            .WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(le =>
+                    le.Properties.TryGetValue("SourceContext", out var sc) &&
+                    sc is Serilog.Events.ScalarValue { Value: string s } &&
+                    s.StartsWith("AttendanceRecorder.LifeSign", StringComparison.Ordinal))
+                .WriteTo.File(
+                    path: "logs/life-sign.log",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 2,
+                    formatProvider: CultureInfo.InvariantCulture))
             .CreateBootstrapLogger();
 
         var builder = WebApplication.CreateBuilder();
@@ -54,7 +64,18 @@ public sealed class Program
                 new JsonFormatter(),
                 "logs/log.txt",
                 rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 2));
+                retainedFileCountLimit: 2)
+            .WriteTo.Logger(lc2 => lc2
+                .Filter.ByIncludingOnly(le =>
+                    le.Properties.TryGetValue("SourceContext", out var sc) &&
+                    sc is Serilog.Events.ScalarValue sv &&
+                    sv.Value is string s &&
+                    s.StartsWith("AttendanceRecorder.LifeSign", StringComparison.Ordinal))
+                .WriteTo.File(
+                    "logs/lifesign.log",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 2,
+                    formatProvider: CultureInfo.InvariantCulture)));
 
         var port = builder.Configuration.GetValue<int>("Server:Port");
         builder.WebHost.ConfigureKestrel(options =>
